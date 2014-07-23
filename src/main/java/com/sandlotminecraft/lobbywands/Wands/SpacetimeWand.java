@@ -1,12 +1,12 @@
-package com.sandlotminecraft.lobbywands;
+package com.sandlotminecraft.lobbywands.Wands;
 
+import com.sandlotminecraft.lobbywands.LobbyWands;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -20,26 +20,27 @@ import java.util.Random;
 /**
  * Created by Shawn on 7/21/2014.
  */
-public class MagicWand implements Listener {
+public class SpacetimeWand implements Listener {
 
     private Plugin plugin = Bukkit.getPluginManager().getPlugin("LobbyWands");
 
-    public static ItemStack getMagicWand() {
-        ItemStack wand = new ItemStack(Material.STICK, 1);
+    public static ItemStack getSpacetimeWand() {
+        ItemStack wand = new ItemStack(Material.REDSTONE_TORCH_ON, 1);
         ItemMeta im = wand.getItemMeta();
-        im.setDisplayName(ChatColor.LIGHT_PURPLE + "Magic Wand");
-        im.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&9&oMakes Magic Happen :D"), ChatColor.DARK_AQUA + "0/10 XP", ChatColor.DARK_AQUA + "Level 1 Wand"));
+        im.setDisplayName(ChatColor.AQUA + "Spacetime Wand");
+        im.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&9&oBends Time and Space :o")));
         im.addEnchant(Enchantment.DAMAGE_ARTHROPODS, 1, true);
         wand.setItemMeta(im);
         return wand;
     }
 
 
+    @SuppressWarnings("deprecation")
     @EventHandler
-    public void onUseMagicWand (PlayerInteractEvent event) {
+    public void onUseSpacetimeWand (PlayerInteractEvent event) {
         final Player p = event.getPlayer();
 
-        if (!p.getItemInHand().getType().equals(Material.STICK) || !p.getItemInHand().getItemMeta().hasDisplayName() || !p.getItemInHand().getItemMeta().getDisplayName().contains("Magic Wand")) {
+        if (!p.getItemInHand().getType().equals(Material.REDSTONE_TORCH_ON) || !p.getItemInHand().getItemMeta().hasDisplayName() || !p.getItemInHand().getItemMeta().getDisplayName().contains("Spacetime")) {
             return;
         }
 
@@ -47,13 +48,13 @@ public class MagicWand implements Listener {
             int dir = LobbyWands.getCardinalDirection(p);
             Location loc = p.getLocation();
             Random rand = new Random();
-            int chanceGoBoom = rand.nextInt(100);
+            int chanceGoBoom = rand.nextInt(50);
 
             if (chanceGoBoom == 1) {
                 //loc.getWorld().playSound(loc, Sound.EXPLODE, 20, 10);
-                p.getWorld().createExplosion(loc, 0.0F, false);
-                p.setVelocity(p.getVelocity().setY(rand.nextInt(4) + 3));
-                p.sendMessage(ChatColor.DARK_PURPLE + "Oops...");
+                p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 300, 1));
+                p.sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "Wingardium Propero!" + ChatColor.RESET + "" + ChatColor.GREEN + " - You now move with great speed!");
+                p.getLocation().getWorld().playSound(p.getLocation(), Sound.HORSE_GALLOP, 10, 10);
                 return;
             }
 
@@ -82,21 +83,13 @@ public class MagicWand implements Listener {
 
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 
-            long cooldown = 90000 - (WandExperience.getLevel(p.getItemInHand().getItemMeta().getLore().get(2)) * 6000);
-            long timesince = System.currentTimeMillis() - LobbyWands.getInvisCooldown(p.getName());
-            if (timesince < cooldown) {
-                p.sendMessage(ChatColor.DARK_PURPLE + "Your wand is still recharging. You can use it again in " + ((cooldown - timesince) / 1000) + " seconds.");
+            if (System.currentTimeMillis() - LobbyWands.getInvisCooldown(p.getName()) < 45000) {
+                p.sendMessage(ChatColor.DARK_PURPLE + "Your wand is still recharging...");
             } else {
-                p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 300, 0));
-                p.getLocation().getWorld().playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 3, 10);
-                p.sendMessage(ChatColor.DARK_PURPLE + "You've vanished!");
+                p.getLocation().getWorld().playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 10, 10);
+                p.teleport(p.getTargetBlock(null, 20).getLocation());
+                p.sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + "Teleporto!");
                 LobbyWands.invisCooldown.put(p.getName(), System.currentTimeMillis());
-                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                    public void run() {
-                        if (p.isOnline()) p.sendMessage(ChatColor.DARK_PURPLE + "You've reappeared!");
-                        if (p.isOnline()) p.getLocation().getWorld().playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 3, 10);
-                    }
-                }, 300L);
                 plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                     public void run() {
                         if (p.isOnline()) p.sendMessage(ChatColor.DARK_PURPLE + "Your wand is now recharged.");

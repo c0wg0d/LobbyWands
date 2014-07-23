@@ -1,27 +1,23 @@
-package com.sandlotminecraft.lobbywands;
+package com.sandlotminecraft.lobbywands.Wands;
 
+import com.sandlotminecraft.lobbywands.LobbyWands;
+import com.sandlotminecraft.lobbywands.ParticleEffect;
 import org.bukkit.*;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.*;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -46,6 +42,7 @@ public class FlowerWand implements Listener {
     }
 
 
+    @SuppressWarnings("deprecation")
     @EventHandler
     public void onUseFlowerWand (PlayerInteractEvent event) {
         final Player p = event.getPlayer();
@@ -162,7 +159,7 @@ public class FlowerWand implements Listener {
 
     public static Entity[] getNearbyEntities(Location l, int radius) {
         int chunkRadius = radius < 16 ? 1 : (radius - (radius % 16)) / 16;
-        HashSet<Entity> radiusEntities = new HashSet < Entity > ();
+        HashSet<Entity> radiusEntities = new HashSet <>();
 
         for (int chX = 0 - chunkRadius; chX <= chunkRadius; chX++) {
             for (int chZ = 0 - chunkRadius; chZ <= chunkRadius; chZ++) {

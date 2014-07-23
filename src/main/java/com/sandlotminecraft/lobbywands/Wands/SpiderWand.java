@@ -1,12 +1,12 @@
-package com.sandlotminecraft.lobbywands;
+package com.sandlotminecraft.lobbywands.Wands;
 
+import com.sandlotminecraft.lobbywands.LobbyWands;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -15,47 +15,36 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.Arrays;
-import java.util.Random;
 
 /**
  * Created by Shawn on 7/21/2014.
  */
-public class SpacetimeWand implements Listener {
+public class SpiderWand implements Listener {
 
     private Plugin plugin = Bukkit.getPluginManager().getPlugin("LobbyWands");
 
-    public static ItemStack getSpacetimeWand() {
-        ItemStack wand = new ItemStack(Material.REDSTONE_TORCH_ON, 1);
+    public static ItemStack getSpiderWand() {
+        ItemStack wand = new ItemStack(Material.TRIPWIRE_HOOK, 1);
         ItemMeta im = wand.getItemMeta();
-        im.setDisplayName(ChatColor.AQUA + "Spacetime Wand");
-        im.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&9&oBends Time and Space :o")));
-        im.addEnchant(Enchantment.DAMAGE_ARTHROPODS, 1, true);
+        im.setDisplayName(ChatColor.GRAY + "Spider Wand");
+        im.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&9&oSpecial Extermination Edition")));
+        im.addEnchant(Enchantment.DAMAGE_ARTHROPODS, 2, true);
         wand.setItemMeta(im);
         return wand;
     }
 
 
     @EventHandler
-    public void onUseSpacetimeWand (PlayerInteractEvent event) {
+    public void onUseSpiderWand (PlayerInteractEvent event) {
         final Player p = event.getPlayer();
 
-        if (!p.getItemInHand().getType().equals(Material.REDSTONE_TORCH_ON) || !p.getItemInHand().getItemMeta().hasDisplayName() || !p.getItemInHand().getItemMeta().getDisplayName().contains("Spacetime")) {
+        if (!p.getItemInHand().getType().equals(Material.TRIPWIRE_HOOK) || !p.getItemInHand().getItemMeta().hasDisplayName() || !p.getItemInHand().getItemMeta().getDisplayName().contains("Spider")) {
             return;
         }
 
         if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
             int dir = LobbyWands.getCardinalDirection(p);
             Location loc = p.getLocation();
-            Random rand = new Random();
-            int chanceGoBoom = rand.nextInt(50);
-
-            if (chanceGoBoom == 1) {
-                //loc.getWorld().playSound(loc, Sound.EXPLODE, 20, 10);
-                p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 300, 1));
-                p.sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "Wingardium Propero!" + ChatColor.RESET + "" + ChatColor.GREEN + " - You now move with great speed!");
-                p.getLocation().getWorld().playSound(p.getLocation(), Sound.HORSE_GALLOP, 10, 10);
-                return;
-            }
 
             switch(dir) {
                 case 1 : loc = new Location(p.getWorld(), loc.getX(), loc.getY()+1, loc.getZ() - 0.75, loc.getYaw(), loc.getPitch());
@@ -85,9 +74,9 @@ public class SpacetimeWand implements Listener {
             if (System.currentTimeMillis() - LobbyWands.getInvisCooldown(p.getName()) < 45000) {
                 p.sendMessage(ChatColor.DARK_PURPLE + "Your wand is still recharging...");
             } else {
-                p.getLocation().getWorld().playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 10, 10);
-                p.teleport(p.getTargetBlock(null, 20).getLocation());
-                p.sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + "Teleporto!");
+                p.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 300, 0));
+                p.getLocation().getWorld().playSound(p.getLocation(),Sound.BLAZE_BREATH, 10, 10);
+                p.sendMessage(ChatColor.GRAY + "" + ChatColor.BOLD + "Engorgio!" + ChatColor.RESET + "" + ChatColor.GRAY + " - You grow stronger!");
                 LobbyWands.invisCooldown.put(p.getName(), System.currentTimeMillis());
                 plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                     public void run() {
