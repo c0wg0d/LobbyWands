@@ -1,6 +1,8 @@
 package com.sandlotminecraft.lobbywands.Wands;
 
 import com.sandlotminecraft.lobbywands.LobbyWands;
+import com.sandlotminecraft.lobbywands.ParticleEffect;
+import com.sandlotminecraft.lobbywands.WandExperience;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Fireball;
@@ -16,97 +18,90 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
 import java.util.Arrays;
-import java.util.Random;
 
-/**
- * Created by Shawn on 7/21/2014.
- */
-public class BlazeWand implements Listener {
-
+public class BlazeWand
+        implements Listener {
     private Plugin plugin = Bukkit.getPluginManager().getPlugin("LobbyWands");
 
     public static ItemStack getBlazeWand() {
         ItemStack wand = new ItemStack(Material.BLAZE_ROD, 1);
         ItemMeta im = wand.getItemMeta();
         im.setDisplayName(ChatColor.RED + "Blaze Wand");
-        im.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', "&9&oA Magical Fire Wand")));
+        im.setLore(Arrays.asList(new String[]{ChatColor.translateAlternateColorCodes('&', "&9&oA Magical Fire Wand"), ChatColor.DARK_AQUA + "0/100 XP", ChatColor.DARK_AQUA + "Level 1 Wand"}));
         im.addEnchant(Enchantment.DAMAGE_ARTHROPODS, 1, true);
         wand.setItemMeta(im);
         return wand;
     }
 
-
     @EventHandler
-    public void onUseBlazeWand (PlayerInteractEvent event) {
+    public void onUseBlazeWand(PlayerInteractEvent event) {
         final Player p = event.getPlayer();
-
-        if (!p.getItemInHand().getType().equals(Material.BLAZE_ROD)) {// || !p.getItemInHand().getItemMeta().hasDisplayName() || !p.getItemInHand().getItemMeta().getDisplayName().contains("Blaze Wand")) {
+        if ((!p.getItemInHand().getType().equals(Material.BLAZE_ROD)) || (!p.getItemInHand().getItemMeta().hasDisplayName()) || (!p.getItemInHand().getItemMeta().getDisplayName().contains("Blaze Wand"))) {
             return;
         }
-
-        if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
-            int dir = LobbyWands.getCardinalDirection(p);
-            Location loc = p.getLocation();
-            Random rand = new Random();
-            int chanceGoBoom = rand.nextInt(100);
-
-            if (chanceGoBoom == 1) {
-                p.setFireTicks(300);
-                loc.getWorld().playSound(loc, Sound.FIRE_IGNITE, 10, 10);
-                p.sendMessage(ChatColor.DARK_PURPLE + "Oops...");
-                return;
+        if ((event.getAction() == Action.LEFT_CLICK_AIR) || (event.getAction() == Action.LEFT_CLICK_BLOCK)) {
+            int dir = LobbyWands.getCardinalDirection(p).intValue();
+            Location loc = p.getEyeLocation();
+            switch (dir) {
+                case 1:
+                    loc = new Location(p.getWorld(), loc.getX(), loc.getY(), loc.getZ() - 1.0D, loc.getYaw(), loc.getPitch());
+                    break;
+                case 2:
+                    loc = new Location(p.getWorld(), loc.getX() + 0.5D, loc.getY(), loc.getZ() - 1.0D, loc.getYaw(), loc.getPitch());
+                    break;
+                case 5:
+                    loc = new Location(p.getWorld(), loc.getX() + 1.0D, loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    break;
+                case 8:
+                    loc = new Location(p.getWorld(), loc.getX() + 1.0D, loc.getY(), loc.getZ() + 1.0D, loc.getYaw(), loc.getPitch());
+                    break;
+                case 7:
+                    loc = new Location(p.getWorld(), loc.getX(), loc.getY(), loc.getZ() + 1.0D, loc.getYaw(), loc.getPitch());
+                    break;
+                case 6:
+                    loc = new Location(p.getWorld(), loc.getX() - 1.0D, loc.getY(), loc.getZ() + 1.0D, loc.getYaw(), loc.getPitch());
+                    break;
+                case 3:
+                    loc = new Location(p.getWorld(), loc.getX() - 1.0D, loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                    break;
+                case 0:
+                    loc = new Location(p.getWorld(), loc.getX() - 1.0D, loc.getY(), loc.getZ() - 1.0D, loc.getYaw(), loc.getPitch());
             }
-
-            switch(dir) {
-                case 1 : loc = new Location(p.getWorld(), loc.getX(), loc.getY()+1, loc.getZ() - 1, loc.getYaw(), loc.getPitch());
-                    break;
-                case 2 : loc = new Location(p.getWorld(), loc.getX() + .5, loc.getY()+1, loc.getZ() - 1, loc.getYaw(), loc.getPitch());
-                    break;
-                case 5 : loc = new Location(p.getWorld(), loc.getX() + 1, loc.getY()+1, loc.getZ(), loc.getYaw(), loc.getPitch());
-                    break;
-                case 8 : loc = new Location(p.getWorld(), loc.getX() + 1, loc.getY()+1, loc.getZ() + 1, loc.getYaw(), loc.getPitch());
-                    break;
-                case 7 : loc = new Location(p.getWorld(), loc.getX(), loc.getY()+1, loc.getZ() + 1, loc.getYaw(), loc.getPitch());
-                    break;
-                case 6 : loc = new Location(p.getWorld(), loc.getX() - 1, loc.getY()+1, loc.getZ() + 1, loc.getYaw(), loc.getPitch());
-                    break;
-                case 3 : loc = new Location(p.getWorld(), loc.getX() - 1, loc.getY()+1, loc.getZ(), loc.getYaw(), loc.getPitch());
-                    break;
-                case 0 : loc = new Location(p.getWorld(), loc.getX() - 1, loc.getY()+1, loc.getZ() - 1, loc.getYaw(), loc.getPitch());
-                    break;
-            }
-
-            loc.getWorld().playEffect(loc, Effect.MOBSPAWNER_FLAMES, dir, 10);
-            loc.getWorld().playSound(loc, Sound.FIRE, 10, 10);
+            ParticleEffect.LAVA.display(0.0F, 0.0F, 0.0F, 1.0F, 1, loc, 30);
+            loc.getWorld().playSound(loc, Sound.FIRE, 10.0F, 10.0F);
         }
-
-        if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-
-            if (System.currentTimeMillis() - LobbyWands.getInvisCooldown(p.getName()) < 45000) {
-                p.sendMessage(ChatColor.DARK_PURPLE + "Your wand is still recharging...");
+        if ((event.getAction() == Action.RIGHT_CLICK_AIR) || (event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+            long cooldown = 90000 - (WandExperience.getLevel((String) p.getItemInHand().getItemMeta().getLore().get(2)) - 1) * 8000;
+            long timesince = System.currentTimeMillis() - LobbyWands.getCooldown(p.getName(), "blaze");
+            if (timesince < cooldown) {
+                p.sendMessage(ChatColor.DARK_PURPLE + "Your wand is still recharging. You can use it again in " + (cooldown - timesince) / 1000L + " seconds.");
             } else {
                 Vector dir = p.getEyeLocation().getDirection().multiply(2);
-                Fireball fb = p.getWorld().spawn(p.getEyeLocation().add(dir.getX(), dir.getY(), dir.getZ()), Fireball.class);
+                Fireball fb = (Fireball) p.launchProjectile(Fireball.class, dir);
+                fb = (Fireball) p.getWorld().spawn(p.getEyeLocation().add(dir.getX(), dir.getY(), dir.getZ()), Fireball.class);
                 fb.setShooter(p);
-                fb.setYield(4.0F);
+                fb.setYield(1.5F + WandExperience.getLevel((String) p.getItemInHand().getItemMeta().getLore().get(2)) / 4);
                 fb.setBounce(false);
-                //fb.setYield(0.0F);
-                fb.setIsIncendiary(false);
-                p.getLocation().getWorld().playSound(p.getLocation(), Sound.FIREWORK_LAUNCH, 10, 10);
-                LobbyWands.invisCooldown.put(p.getName(), System.currentTimeMillis());
 
-                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                fb.setIsIncendiary(false);
+                p.getLocation().getWorld().playSound(p.getLocation(), Sound.FIREWORK_LAUNCH, 10.0F, 10.0F);
+                LobbyWands.setCooldown(p.getName(), "blaze");
+                p.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "Flagrante!");
+
+                this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
                     public void run() {
-                        if (p.isOnline()) p.sendMessage(ChatColor.DARK_PURPLE + "Your wand is now recharged.");
+                        if (p.isOnline()) {
+                            p.sendMessage(ChatColor.DARK_PURPLE + "Your Blaze Wand is now recharged.");
+                        }
                     }
-                }, 1200L);
+                }, cooldown / 50L);
             }
         }
     }
 
     @EventHandler
-    public void onFireballExplode (EntityExplodeEvent event) {
-        if (event.getEntity() instanceof Fireball) {
+    public void onFireballExplode(EntityExplodeEvent event) {
+        if ((event.getEntity() instanceof Fireball)) {
             event.setCancelled(true);
         }
     }

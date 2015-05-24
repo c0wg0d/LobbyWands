@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Class-Path: spigot-api-1.8-R0.1-20150227.224658-194.jar bukkit-1.8-R0.
+ 1-20150227.224714-194.jar Vault-1.5.4.jar gson-2.3.1.jar guava-17.0.j
+ ar commons-lang-2.6.jar VaultAPI-1.5.jar snakeyaml-1.14.jar persisten
+ ce-api-1.0.jar json-simple-1.1.1.jar hamcrest-core-1.1.jar ebean-2.8.
+ 1.jar bungeecord-chat-1.8-20150518.102317-77.jar junit-4.10.jar
+Main-Class: 
+

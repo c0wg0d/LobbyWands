@@ -1,6 +1,6 @@
 name: LobbyWands
 main: com.sandlotminecraft.lobbywands.LobbyWands
-version: 1.0
+version: 1.2
 commands:
     wands:
         description: null
