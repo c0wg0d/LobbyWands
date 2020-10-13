@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="EchoPet">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/libs/EchoPet.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/EchoPet.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

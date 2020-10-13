@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="EchoPetAPI">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/libs/EchoPetAPI.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
