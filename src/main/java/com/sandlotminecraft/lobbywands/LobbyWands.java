@@ -43,13 +43,15 @@ public class LobbyWands
 
         getServer().clearRecipes();
 
-        getServer().getWorld("lobby").setMonsterSpawnLimit(100);
-        getServer().getWorld("lobby").setTicksPerAnimalSpawns(100);
-        getServer().getWorld("lobby").setTicksPerMonsterSpawns(20);
+        String optionsWorldName = getConfig().getString("options.world-name");
+
+        getServer().getWorld(optionsWorldName).setMonsterSpawnLimit(100);
+        getServer().getWorld(optionsWorldName).setTicksPerAnimalSpawns(100);
+        getServer().getWorld(optionsWorldName).setTicksPerMonsterSpawns(20);
 
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
             public void run() {
-                LobbyWands.this.getServer().getWorld("lobby").setTime(18000L);
+                LobbyWands.this.getServer().getWorld(optionsWorldName).setTime(18000L);
             }
         }, 200L, 200L);
     }
@@ -60,22 +62,22 @@ public class LobbyWands
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if ((sender instanceof Player)) {
             Player p = (Player) sender;
-            p.getInventory().addItem(new ItemStack[]{MagicWand.getMagicWand()});
-            p.getInventory().addItem(new ItemStack[]{BlazeWand.getBlazeWand()});
-            p.getInventory().addItem(new ItemStack[]{SpacetimeWand.getSpacetimeWand()});
-            p.getInventory().addItem(new ItemStack[]{SpiderWand.getSpiderWand()});
-            p.getInventory().addItem(new ItemStack[]{FlowerWand.getFlowerWand()});
-            p.getInventory().addItem(new ItemStack[]{SpellBooks.getFireballBook(Integer.valueOf(1))});
-            p.getInventory().addItem(new ItemStack[]{SpellBooks.getLightningBook(Integer.valueOf(1))});
-            p.getInventory().addItem(new ItemStack[]{SpellBooks.getFireballBook(Integer.valueOf(2))});
-            p.getInventory().addItem(new ItemStack[]{SpellBooks.getLightningBook(Integer.valueOf(2))});
-            p.getInventory().addItem(new ItemStack[]{PetEggs.getBatEgg()});
-            p.getInventory().addItem(new ItemStack[]{PetEggs.getCatEgg()});
-            p.getInventory().addItem(new ItemStack[]{PetEggs.getBugEgg()});
+            p.getInventory().addItem(MagicWand.getMagicWand());
+            p.getInventory().addItem(BlazeWand.getBlazeWand());
+            p.getInventory().addItem(SpacetimeWand.getSpacetimeWand());
+            p.getInventory().addItem(SpiderWand.getSpiderWand());
+            p.getInventory().addItem(FlowerWand.getFlowerWand());
+            p.getInventory().addItem(SpellBooks.getFireballBook(1));
+            p.getInventory().addItem(SpellBooks.getLightningBook(1));
+            p.getInventory().addItem(SpellBooks.getFireballBook(2));
+            p.getInventory().addItem(SpellBooks.getLightningBook(2));
+            p.getInventory().addItem(PetEggs.getBatEgg());
+            p.getInventory().addItem(PetEggs.getCatEgg());
+            p.getInventory().addItem(PetEggs.getBugEgg());
 
-            p.getInventory().addItem(new ItemStack[]{Currency.getGalleons(Integer.valueOf(64))});
-            p.getInventory().addItem(new ItemStack[]{Currency.getSickles(Integer.valueOf(64))});
-            p.getInventory().addItem(new ItemStack[]{Currency.getKnuts(Integer.valueOf(64))});
+            p.getInventory().addItem(Currency.getGalleons(64));
+            p.getInventory().addItem(Currency.getSickles(64));
+            p.getInventory().addItem(Currency.getKnuts(64));
             p.sendMessage("You've been given a bunch of random garbage.");
             return true;
         }
@@ -95,7 +97,7 @@ public class LobbyWands
             }
         }
         if (!hasWand) {
-            event.getPlayer().getInventory().addItem(new ItemStack[]{MagicWand.getMagicWand()});
+            event.getPlayer().getInventory().addItem(MagicWand.getMagicWand());
             event.getPlayer().sendMessage(ChatColor.LIGHT_PURPLE + "You've been given a Magic Wand!");
         }
     }
@@ -106,33 +108,33 @@ public class LobbyWands
             rotation += 360.0D;
         }
         if ((292.5D <= rotation) && (rotation < 337.5D)) {
-            return Integer.valueOf(8);
+            return 8;
         }
         if ((157.5D <= rotation) && (rotation <= 202.5D)) {
-            return Integer.valueOf(1);
+            return 1;
         }
         if ((22.5D <= rotation) && (rotation <= 67.5D)) {
-            return Integer.valueOf(6);
+            return 6;
         }
         if ((67.5D <= rotation) && (rotation <= 112.5D)) {
-            return Integer.valueOf(3);
+            return 3;
         }
         if ((112.5D <= rotation) && (rotation <= 157.5D)) {
-            return Integer.valueOf(0);
+            return 0;
         }
         if ((337.5D <= rotation) && (rotation <= 360.0D)) {
-            return Integer.valueOf(7);
+            return 7;
         }
         if ((0.0D <= rotation) && (rotation <= 22.5D)) {
-            return Integer.valueOf(7);
+            return 7;
         }
         if ((202.5D <= rotation) && (rotation <= 247.5D)) {
-            return Integer.valueOf(2);
+            return 2;
         }
         if ((247.5D <= rotation) && (rotation <= 292.5D)) {
-            return Integer.valueOf(5);
+            return 5;
         }
-        return Integer.valueOf(-1);
+        return -1;
     }
 
     public static long getCooldown(String pname, String wand) {

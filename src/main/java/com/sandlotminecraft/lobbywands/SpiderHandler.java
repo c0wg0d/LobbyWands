@@ -10,8 +10,10 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.Potion;
+import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 
 import java.util.Random;
@@ -35,9 +37,9 @@ public class SpiderHandler
         final Player p = ((Player) event.getDamager()).getPlayer();
 
         Entity spider = event.getEntity();
-        if ((p.getItemInHand().hasItemMeta()) && (p.getItemInHand().getItemMeta().hasDisplayName()) && (p.getItemInHand().getItemMeta().getDisplayName().contains("Magic"))) {
+        if ((p.getInventory().getItemInMainHand().hasItemMeta()) && (p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName()) && (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("Magic"))) {
             Random rand = new Random();
-            int wandlevel = WandExperience.getLevel((String) p.getItemInHand().getItemMeta().getLore().get(2));
+            int wandlevel = WandExperience.getLevel((String) p.getInventory().getItemInMainHand().getItemMeta().getLore().get(2));
             int chanceGoBoom = rand.nextInt(20);
             if (wandlevel >= 3) {
                 chanceGoBoom = rand.nextInt(15);
@@ -48,21 +50,22 @@ public class SpiderHandler
             if (wandlevel >= 9) {
                 chanceGoBoom = rand.nextInt(5);
             }
+
             if (chanceGoBoom == 1) {
-                Potion potion = new Potion(PotionType.INSTANT_DAMAGE, wandlevel > 4 ? 2 : 1);
-                potion.setSplash(true);
-                ItemStack itemStack = new ItemStack(Material.POTION);
-                potion.apply(itemStack);
+                ItemStack potion = new ItemStack(Material.SPLASH_POTION, 1);
+                PotionMeta meta = (PotionMeta) potion.getItemMeta();
+                meta.setBasePotionData(new PotionData(PotionType.INSTANT_DAMAGE, false, wandlevel > 4 ? true : false));
+                potion.setItemMeta(meta);
                 ThrownPotion thrownPotion = (ThrownPotion) p.launchProjectile(ThrownPotion.class);
                 thrownPotion.setShooter(p);
-                thrownPotion.setItem(itemStack);
+                thrownPotion.setItem(potion);
                 p.sendMessage(ChatColor.BLUE + "" + ChatColor.BOLD + "Stupefy Regio!");
             }
         }
-        if ((p.getItemInHand().hasItemMeta()) && (p.getItemInHand().getItemMeta().hasDisplayName()) && (p.getItemInHand().getItemMeta().getDisplayName().contains("Blaze"))) {
+        if ((p.getInventory().getItemInMainHand().hasItemMeta()) && (p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName()) && (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("Blaze"))) {
             Random rand = new Random();
             int chanceGoBoom = rand.nextInt(20);
-            int wandlevel = WandExperience.getLevel((String) p.getItemInHand().getItemMeta().getLore().get(2));
+            int wandlevel = WandExperience.getLevel((String) p.getInventory().getItemInMainHand().getItemMeta().getLore().get(2));
             if (wandlevel >= 3) {
                 chanceGoBoom = rand.nextInt(15);
             }
@@ -79,14 +82,14 @@ public class SpiderHandler
                         setfire.setFireTicks(100 + wandlevel * 5);
                     }
                 }
-                p.getLocation().getWorld().playSound(spider.getLocation(), Sound.GHAST_FIREBALL, 10.0F, 10.0F);
+                p.getLocation().getWorld().playSound(spider.getLocation(), Sound.ENTITY_GHAST_SHOOT, 10.0F, 10.0F);
                 p.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "Incendio!");
             }
         }
-        if ((p.getItemInHand().hasItemMeta()) && (p.getItemInHand().getItemMeta().hasDisplayName()) && (p.getItemInHand().getItemMeta().getDisplayName().contains("Spacetime"))) {
+        if ((p.getInventory().getItemInMainHand().hasItemMeta()) && (p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName()) && (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("Spacetime"))) {
             Random rand = new Random();
             int chanceGoBoom = rand.nextInt(20);
-            int wandlevel = WandExperience.getLevel((String) p.getItemInHand().getItemMeta().getLore().get(2));
+            int wandlevel = WandExperience.getLevel((String) p.getInventory().getItemInMainHand().getItemMeta().getLore().get(2));
             if (wandlevel >= 3) {
                 chanceGoBoom = rand.nextInt(15);
             }
@@ -118,16 +121,16 @@ public class SpiderHandler
                             }
                         }
                         warpspiders[i].getLocation().getWorld().playEffect(warpspiders[i].getLocation(), Effect.ENDER_SIGNAL, 5);
-                        warpspiders[i].getLocation().getWorld().playSound(warpspiders[i].getLocation(), Sound.ENDERMAN_TELEPORT, 10.0F, 10.0F);
+                        warpspiders[i].getLocation().getWorld().playSound(warpspiders[i].getLocation(), Sound.ENTITY_ENDERMEN_TELEPORT, 10.0F, 10.0F);
                         warpspiders[i].teleport(loc);
                     }
                 }
             }
         }
-        if ((p.getItemInHand().hasItemMeta()) && (p.getItemInHand().getItemMeta().hasDisplayName()) && (p.getItemInHand().getItemMeta().getDisplayName().contains("Spider"))) {
+        if ((p.getInventory().getItemInMainHand().hasItemMeta()) && (p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName()) && (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("Spider"))) {
             Random rand = new Random();
             int chanceGoBoom = rand.nextInt(20);
-            final int wandlevel = WandExperience.getLevel((String) p.getItemInHand().getItemMeta().getLore().get(2));
+            final int wandlevel = WandExperience.getLevel((String) p.getInventory().getItemInMainHand().getItemMeta().getLore().get(2));
             if (wandlevel >= 3) {
                 chanceGoBoom = rand.nextInt(15);
             }
@@ -184,10 +187,10 @@ public class SpiderHandler
                 }
             }
         }
-        if ((p.getItemInHand().hasItemMeta()) && (p.getItemInHand().getItemMeta().hasDisplayName()) && (p.getItemInHand().getItemMeta().getDisplayName().contains("Flower"))) {
+        if ((p.getInventory().getItemInMainHand().hasItemMeta()) && (p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName()) && (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("Flower"))) {
             Random rand = new Random();
             int chanceGoBoom = rand.nextInt(20);
-            final int wandlevel = WandExperience.getLevel((String) p.getItemInHand().getItemMeta().getLore().get(2));
+            final int wandlevel = WandExperience.getLevel((String) p.getInventory().getItemInMainHand().getItemMeta().getLore().get(2));
             if (wandlevel >= 3) {
                 chanceGoBoom = rand.nextInt(15);
             }
@@ -197,6 +200,7 @@ public class SpiderHandler
             if (wandlevel >= 9) {
                 chanceGoBoom = rand.nextInt(5);
             }
+
             if (chanceGoBoom == 1) {
                 if ((spider instanceof LivingEntity)) {
                     p.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "Mutatio Flora!");
@@ -204,15 +208,15 @@ public class SpiderHandler
                     ItemStack rosebush = new ItemStack(175, 1, (short) 0, Byte.valueOf((byte) 4));
                     Item flower = spider.getWorld().dropItem(spider.getLocation(), rosebush);
                     flower.setPickupDelay(1000);
-                    spider.setPassenger(flower);
+                    spider.addPassenger(flower);
                     final LivingEntity flowerspider = (LivingEntity) spider;
                     final Item sflower = flower;
-                    p.getLocation().getWorld().playSound(p.getLocation(), Sound.WITHER_SHOOT, 10.0F, 10.0F);
-                    ParticleEffect.HEART.display(1.0F, 1.0F, 1.0F, 5.0F, 10, spider.getLocation(), 30);
+                    p.getLocation().getWorld().playSound(p.getLocation(), Sound.ENTITY_WITHER_SHOOT, 10.0F, 10.0F);
+                    spider.getLocation().getWorld().spawnParticle(Particle.HEART, spider.getLocation(), 5);
                     this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
                         public void run() {
                             if (!flowerspider.isDead()) {
-                                if (flowerspider.getPassenger() == sflower) {
+                                if (flowerspider.getPassengers().contains(sflower)) {
                                     sflower.remove();
                                 }
                                 flowerspider.getLocation().getWorld().createExplosion(flowerspider.getLocation().getX(), flowerspider.getLocation().getY(), flowerspider.getLocation().getZ(), 0.5F + wandlevel * 0.25F, false, false);
@@ -232,23 +236,23 @@ public class SpiderHandler
         }
     }
 
-    @EventHandler
-    public void cancelItemFrameItemRemoval(HangingBreakEvent event) {
-        event.setCancelled(true);
-    }
-
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void allowModToEditHangings(HangingBreakByEntityEvent event) {
-        if (((event.getRemover() instanceof Player)) &&
-                (((Player) event.getRemover()).hasPermission("group.moderator"))) {
-            event.setCancelled(false);
-        }
-    }
-
-    @EventHandler
-    public void stopHangingDamage(EntityDamageEvent event) {
-        if ((event.getEntityType() == EntityType.ITEM_FRAME) || (event.getEntityType() == EntityType.PAINTING)) {
-            event.setCancelled(true);
-        }
-    }
+//    @EventHandler
+//    public void cancelItemFrameItemRemoval(HangingBreakEvent event) {
+//        event.setCancelled(true);
+//    }
+//
+//    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+//    public void allowModToEditHangings(HangingBreakByEntityEvent event) {
+//        if (((event.getRemover() instanceof Player)) &&
+//                (((Player) event.getRemover()).hasPermission("group.moderator"))) {
+//            event.setCancelled(false);
+//        }
+//    }
+//
+//    @EventHandler
+//    public void stopHangingDamage(EntityDamageEvent event) {
+//        if ((event.getEntityType() == EntityType.ITEM_FRAME) || (event.getEntityType() == EntityType.PAINTING)) {
+//            event.setCancelled(true);
+//        }
+//    }
 }

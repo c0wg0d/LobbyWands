@@ -37,7 +37,7 @@ public class SpacetimeWand
     @EventHandler
     public void onUseSpacetimeWand(PlayerInteractEvent event) {
         final Player p = event.getPlayer();
-        if ((!p.getItemInHand().getType().equals(Material.REDSTONE_TORCH_ON)) || (!p.getItemInHand().getItemMeta().hasDisplayName()) || (!p.getItemInHand().getItemMeta().getDisplayName().contains("Spacetime"))) {
+        if ((!p.getInventory().getItemInMainHand().getType().equals(Material.REDSTONE_TORCH_ON)) || (!p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName()) || (!p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("Spacetime"))) {
             return;
         }
         if ((event.getAction() == Action.LEFT_CLICK_AIR) || (event.getAction() == Action.LEFT_CLICK_BLOCK)) {
@@ -48,7 +48,7 @@ public class SpacetimeWand
             if (chanceGoBoom == 1) {
                 p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 300, 1));
                 p.sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "Wingardium Propero!" + ChatColor.RESET + "" + ChatColor.GREEN + " - You now move with great speed!");
-                p.getLocation().getWorld().playSound(p.getLocation(), Sound.HORSE_GALLOP, 10.0F, 10.0F);
+                p.getLocation().getWorld().playSound(p.getLocation(), Sound.ENTITY_HORSE_GALLOP, 10.0F, 10.0F);
                 return;
             }
             switch (dir) {
@@ -76,19 +76,29 @@ public class SpacetimeWand
                 case 0:
                     loc = new Location(p.getWorld(), loc.getX() - 0.5D, loc.getY(), loc.getZ() - 0.5D, loc.getYaw(), loc.getPitch());
             }
-            ParticleEffect.REDSTONE.display(0.0F, 0.0F, 0.0F, 1.0F, 1, loc, 30);
-
-            loc.getWorld().playSound(loc, Sound.NOTE_STICKS, 3.0F, 10.0F);
+            loc.getWorld().playEffect(loc, Effect.ENDER_SIGNAL, dir, 10);
+            loc.getWorld().playSound(loc, Sound.BLOCK_NOTE_HAT, 3.0F, 10.0F);
         }
         if ((event.getAction() == Action.RIGHT_CLICK_AIR) || (event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
-            long cooldown = 90000 - (WandExperience.getLevel((String) p.getItemInHand().getItemMeta().getLore().get(2)) - 1) * 6000;
+            long cooldown = 90000 - (WandExperience.getLevel((String) p.getInventory().getItemInMainHand().getItemMeta().getLore().get(2)) - 1) * 6000;
             long timesince = System.currentTimeMillis() - LobbyWands.getCooldown(p.getName(), "spacetime");
-            int wandlevel = WandExperience.getLevel((String) p.getItemInHand().getItemMeta().getLore().get(2));
+            int wandlevel = WandExperience.getLevel((String) p.getInventory().getItemInMainHand().getItemMeta().getLore().get(2));
             if (timesince < cooldown) {
                 p.sendMessage(ChatColor.DARK_PURPLE + "Your wand is still recharging. You can use it again in " + (cooldown - timesince) / 1000L + " seconds.");
             } else {
-                p.getLocation().getWorld().playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 10.0F, 10.0F);
-                p.teleport(p.getTargetBlock(new HashSet<Byte>(), 20 + wandlevel * 2).getLocation());
+                p.getLocation().getWorld().playSound(p.getLocation(), Sound.ENTITY_ENDERMEN_TELEPORT, 10.0F, 10.0F);
+
+                Location loc = p.getLocation();
+                float yaw = loc.getYaw();
+                float pitch = loc.getPitch();
+                Location destination = p.getTargetBlock(null, 20 + wandlevel * 2).getLocation();
+                destination.setYaw(yaw);
+                destination.setPitch(pitch);
+                if(destination.getBlock().getType() != Material.AIR) {
+                    destination.setY(destination.getY() + 1);
+                }
+                p.teleport(destination);
+
                 p.sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + "Teleporto!");
                 LobbyWands.setCooldown(p.getName(), "spacetime");
                 this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {

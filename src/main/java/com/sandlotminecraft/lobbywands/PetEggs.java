@@ -58,13 +58,14 @@ public class PetEggs
     @EventHandler
     public void onEggUse(PlayerInteractEvent event) {
         Player p = event.getPlayer();
-        ItemStack egg = p.getItemInHand();
+        ItemStack egg = p.getInventory().getItemInMainHand();
         if ((egg != null) && (egg.hasItemMeta()) && (egg.getItemMeta().hasDisplayName()) && (egg.getItemMeta().getDisplayName().contains("Pet"))) {
             if (egg.getItemMeta().getDisplayName().contains("Bat")) {
                 if ((event.getAction() == Action.LEFT_CLICK_AIR) || (event.getAction() == Action.LEFT_CLICK_BLOCK)) {
                     if (!getEchoPetAPI().hasPet(p)) {
                         getEchoPetAPI().givePet(p, PetType.BAT, false);
                         getEchoPetAPI().getPet(p).setPetName("" + p.getName() + "'s Pet Bat", false);
+                        getEchoPetAPI().getPet(p).spawnPet(p, true);
                         p.sendMessage(ChatColor.YELLOW + "Your Pet Bat now follows closely behind you.");
                     }
                 } else if ((event.getAction() == Action.RIGHT_CLICK_BLOCK) || (event.getAction() == Action.RIGHT_CLICK_AIR)) {
@@ -78,6 +79,7 @@ public class PetEggs
                     if (!getEchoPetAPI().hasPet(p)) {
                         getEchoPetAPI().givePet(p, PetType.OCELOT, false);
                         getEchoPetAPI().getPet(p).setPetName("" + p.getName() + "'s Pet Cat", false);
+                        getEchoPetAPI().getPet(p).spawnPet(p, true);
                         p.sendMessage(ChatColor.YELLOW + "Your Pet Cat now follows closely behind you.");
                     }
                 } else if ((event.getAction() == Action.RIGHT_CLICK_BLOCK) || (event.getAction() == Action.RIGHT_CLICK_AIR)) {
@@ -91,6 +93,7 @@ public class PetEggs
                     if (!getEchoPetAPI().hasPet(p)) {
                         getEchoPetAPI().givePet(p, PetType.SILVERFISH, false);
                         getEchoPetAPI().getPet(p).setPetName("" + p.getName() + "'s Pet Bug", false);
+                        getEchoPetAPI().getPet(p).spawnPet(p, true);
                         p.sendMessage(ChatColor.YELLOW + "Your Pet Bug now follows closely behind you.");
                     }
                 } else if ((event.getAction() == Action.RIGHT_CLICK_BLOCK) || (event.getAction() == Action.RIGHT_CLICK_AIR)) {

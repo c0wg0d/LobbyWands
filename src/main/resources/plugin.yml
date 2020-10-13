@@ -1,0 +1,14 @@
+name: LobbyWands
+version: 1.2
+main: com.sandlotminecraft.lobbywands.LobbyWands
+prefix: LobbyWands
+author: c0wg0d
+description: Lobby Wands
+website: https://www.sandlotminecraft.com
+api-version: 1.12
+softdepend:
+  - EchoPet
+
+commands:
+  wands:
+    description: 'Gives a bunch of Lobby Wands items.'

@@ -36,7 +36,7 @@ public class BlazeWand
     @EventHandler
     public void onUseBlazeWand(PlayerInteractEvent event) {
         final Player p = event.getPlayer();
-        if ((!p.getItemInHand().getType().equals(Material.BLAZE_ROD)) || (!p.getItemInHand().getItemMeta().hasDisplayName()) || (!p.getItemInHand().getItemMeta().getDisplayName().contains("Blaze Wand"))) {
+        if ((!p.getInventory().getItemInMainHand().getType().equals(Material.BLAZE_ROD)) || (!p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName()) || (!p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("Blaze Wand"))) {
             return;
         }
         if ((event.getAction() == Action.LEFT_CLICK_AIR) || (event.getAction() == Action.LEFT_CLICK_BLOCK)) {
@@ -67,11 +67,13 @@ public class BlazeWand
                 case 0:
                     loc = new Location(p.getWorld(), loc.getX() - 1.0D, loc.getY(), loc.getZ() - 1.0D, loc.getYaw(), loc.getPitch());
             }
-            ParticleEffect.LAVA.display(0.0F, 0.0F, 0.0F, 1.0F, 1, loc, 30);
-            loc.getWorld().playSound(loc, Sound.FIRE, 10.0F, 10.0F);
+            //ParticleEffect.LAVA.display(0.0F, 0.0F, 0.0F, 1.0F, 1, loc, 30);
+            //loc.getWorld().playEffect(loc, Effect.MOBSPAWNER_FLAMES, dir, 10);
+            loc.getWorld().spawnParticle(Particle.LAVA, loc, 1);
+            loc.getWorld().playSound(loc, Sound.BLOCK_FIRE_AMBIENT, 10.0F, 10.0F);
         }
         if ((event.getAction() == Action.RIGHT_CLICK_AIR) || (event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
-            long cooldown = 90000 - (WandExperience.getLevel((String) p.getItemInHand().getItemMeta().getLore().get(2)) - 1) * 8000;
+            long cooldown = 90000 - (WandExperience.getLevel((String) p.getInventory().getItemInMainHand().getItemMeta().getLore().get(2)) - 1) * 8000;
             long timesince = System.currentTimeMillis() - LobbyWands.getCooldown(p.getName(), "blaze");
             if (timesince < cooldown) {
                 p.sendMessage(ChatColor.DARK_PURPLE + "Your wand is still recharging. You can use it again in " + (cooldown - timesince) / 1000L + " seconds.");
@@ -80,11 +82,11 @@ public class BlazeWand
                 Fireball fb = (Fireball) p.launchProjectile(Fireball.class, dir);
                 fb = (Fireball) p.getWorld().spawn(p.getEyeLocation().add(dir.getX(), dir.getY(), dir.getZ()), Fireball.class);
                 fb.setShooter(p);
-                fb.setYield(1.5F + WandExperience.getLevel((String) p.getItemInHand().getItemMeta().getLore().get(2)) / 4);
+                fb.setYield(1.5F + WandExperience.getLevel((String) p.getInventory().getItemInMainHand().getItemMeta().getLore().get(2)) / 4);
                 fb.setBounce(false);
 
                 fb.setIsIncendiary(false);
-                p.getLocation().getWorld().playSound(p.getLocation(), Sound.FIREWORK_LAUNCH, 10.0F, 10.0F);
+                p.getLocation().getWorld().playSound(p.getLocation(), Sound.ENTITY_FIREWORK_LAUNCH, 10.0F, 10.0F);
                 LobbyWands.setCooldown(p.getName(), "blaze");
                 p.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "Flagrante!");
 

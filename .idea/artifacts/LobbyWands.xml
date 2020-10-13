@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="LobbyWands">
+  <artifact type="jar" build-on-make="true" name="LobbyWands">
     <output-path>$PROJECT_DIR$/out/artifacts/LobbyWands</output-path>
     <root id="archive" name="LobbyWands.jar">
       <element id="file-copy" path="$PROJECT_DIR$/plugin.yml" />

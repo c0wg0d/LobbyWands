@@ -36,6 +36,7 @@ public class WandExperience
         if ((event.getEntity().getPassenger() instanceof Item)) {
             event.getEntity().getPassenger().remove();
         }
+
         event.setDroppedExp(0);
         if (event.getDrops() != null) {
             event.getDrops().clear();
@@ -48,13 +49,13 @@ public class WandExperience
                 if (((lastDamager instanceof Fireball)) &&
                         ((((Fireball) lastDamager).getShooter() instanceof Player))) {
                     p = (Player) ((Fireball) lastDamager).getShooter();
-                    if ((!p.getItemInHand().hasItemMeta()) || (!p.getItemInHand().getItemMeta().hasDisplayName()) || (!p.getItemInHand().getItemMeta().getDisplayName().contains("Blaze"))) {
+                    if ((!p.getInventory().getItemInMainHand().hasItemMeta()) || (!p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName()) || (!p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("Blaze"))) {
                         return;
                     }
                 }
             } else if (flowerplaced) {
                 p = pSetExplosion;
-                if ((!p.getItemInHand().hasItemMeta()) || (!p.getItemInHand().getItemMeta().hasDisplayName()) || (!p.getItemInHand().getItemMeta().getDisplayName().contains("Flower"))) {
+                if ((!p.getInventory().getItemInMainHand().hasItemMeta()) || (!p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName()) || (!p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("Flower"))) {
                     return;
                 }
             }
@@ -65,10 +66,10 @@ public class WandExperience
             p = event.getEntity().getKiller();
             flowerplaced = false;
         }
-        if (!p.getItemInHand().hasItemMeta()) {
+        if (!p.getInventory().getItemInMainHand().hasItemMeta()) {
             return;
         }
-        ItemMeta im = p.getItemInHand().getItemMeta();
+        ItemMeta im = p.getInventory().getItemInMainHand().getItemMeta();
 
         String wandType = LobbyWands.getWandName(im);
         int coinsDropped = 0;
@@ -141,8 +142,8 @@ public class WandExperience
         if (xp[0] >= xp[1]) {
             int newlevel = getLevel(ChatColor.stripColor(lore3)) + 1;
             p.sendMessage(ChatColor.YELLOW + "Your wand is now level " + newlevel + "!");
-            p.playSound(p.getLocation(), Sound.LEVEL_UP, 10.0F, 10.0F);
-            ItemMeta wand = p.getItemInHand().getItemMeta();
+            p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10.0F, 10.0F);
+            ItemMeta wand = p.getInventory().getItemInMainHand().getItemMeta();
             xp[0] = 0;
             xp[1] = (newlevel * 100);
             lore3 = ChatColor.DARK_AQUA + "Level " + newlevel + " Wand";
@@ -171,7 +172,7 @@ public class WandExperience
         }
         lore2 = ChatColor.DARK_AQUA + "" + xp[0] + "/" + xp[1] + " XP";
         im.setLore(Arrays.asList(new String[]{lore1, lore2, lore3}));
-        p.getItemInHand().setItemMeta(im);
+        p.getInventory().getItemInMainHand().setItemMeta(im);
         p.setExp(xp[0] / xp[1]);
     }
 

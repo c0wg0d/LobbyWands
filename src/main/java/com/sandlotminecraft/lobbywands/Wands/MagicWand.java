@@ -35,7 +35,7 @@ public class MagicWand
     @EventHandler
     public void onUseMagicWand(PlayerInteractEvent event) {
         final Player p = event.getPlayer();
-        if ((!p.getItemInHand().getType().equals(Material.STICK)) || (!p.getItemInHand().getItemMeta().hasDisplayName()) || (!p.getItemInHand().getItemMeta().getDisplayName().contains("Magic Wand"))) {
+        if ((!p.getInventory().getItemInMainHand().getType().equals(Material.STICK)) || (!p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName()) || (!p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("Magic Wand"))) {
             return;
         }
         if ((event.getAction() == Action.LEFT_CLICK_AIR) || (event.getAction() == Action.LEFT_CLICK_BLOCK)) {
@@ -74,17 +74,18 @@ public class MagicWand
                 case 0:
                     loc = new Location(p.getWorld(), loc.getX() - 0.5D, loc.getY() + 1.0D, loc.getZ() - 0.5D, loc.getYaw(), loc.getPitch());
             }
-            loc.getWorld().playEffect(loc, Effect.SMOKE, dir, 10);
-            loc.getWorld().playSound(loc, Sound.FIZZ, 3.0F, 10.0F);
+            //loc.getWorld().playEffect(loc, Effect.VILLAGER_PLANT_GROW, dir, 10);
+            loc.getWorld().spawnParticle(Particle.SPELL, loc, 1);
+            loc.getWorld().playSound(loc, Sound.BLOCK_FIRE_EXTINGUISH, 3.0F, 10.0F);
         }
         if ((event.getAction() == Action.RIGHT_CLICK_AIR) || (event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
-            long cooldown = 90000 - (WandExperience.getLevel((String) p.getItemInHand().getItemMeta().getLore().get(2)) - 1) * 6000;
+            long cooldown = 90000 - (WandExperience.getLevel((String) p.getInventory().getItemInMainHand().getItemMeta().getLore().get(2)) - 1) * 6000;
             long timesince = System.currentTimeMillis() - LobbyWands.getCooldown(p.getName(), "magic");
             if (timesince < cooldown) {
                 p.sendMessage(ChatColor.DARK_PURPLE + "Your wand is still recharging. You can use it again in " + (cooldown - timesince) / 1000L + " seconds.");
             } else {
                 p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 300, 0));
-                p.getLocation().getWorld().playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 3.0F, 10.0F);
+                p.getLocation().getWorld().playSound(p.getLocation(), Sound.ENTITY_ENDERMEN_TELEPORT, 3.0F, 10.0F);
                 p.sendMessage(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Invisibilia!");
                 LobbyWands.setCooldown(p.getName(), "magic");
                 this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
@@ -93,7 +94,7 @@ public class MagicWand
                             p.sendMessage(ChatColor.DARK_PURPLE + "You've reappeared!");
                         }
                         if (p.isOnline()) {
-                            p.getLocation().getWorld().playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 3.0F, 10.0F);
+                            p.getLocation().getWorld().playSound(p.getLocation(), Sound.ENTITY_ENDERMEN_TELEPORT, 3.0F, 10.0F);
                         }
                     }
                 }, 300L);

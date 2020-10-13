@@ -19,6 +19,7 @@ import org.bukkit.util.Vector;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SpellBooks
         implements Listener {
@@ -67,7 +68,7 @@ public class SpellBooks
                 fb.setYield(damage);
                 fb.setBounce(false);
                 fb.setIsIncendiary(false);
-                p.getLocation().getWorld().playSound(p.getLocation(), Sound.FIREWORK_LAUNCH, 10.0F, 10.0F);
+                p.getLocation().getWorld().playSound(p.getLocation(), Sound.ENTITY_FIREWORK_LAUNCH, 10.0F, 10.0F);
 
                 decrementUses(p, book);
             }
@@ -81,7 +82,7 @@ public class SpellBooks
                     damage = 10.0F;
                     radius = 3;
                 }
-                Location loc = p.getTargetBlock(new HashSet<Byte>(), 100).getLocation();
+                Location loc = p.getTargetBlock(null, 100).getLocation();
                 p.getWorld().strikeLightningEffect(loc);
                 for (LivingEntity e : loc.getWorld().getLivingEntities()) {
                     if ((e.getLocation().distance(loc) <= radius) && (!(e instanceof Player))) {

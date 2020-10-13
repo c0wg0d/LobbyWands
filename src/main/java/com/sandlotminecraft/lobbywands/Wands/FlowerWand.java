@@ -39,7 +39,7 @@ public class FlowerWand
     @EventHandler
     public void onUseFlowerWand(PlayerInteractEvent event) {
         final Player p = event.getPlayer();
-        if ((!p.getItemInHand().getType().equals(Material.RED_ROSE)) || (!p.getItemInHand().getItemMeta().hasDisplayName()) || (!p.getItemInHand().getItemMeta().getDisplayName().contains("Flower Wand"))) {
+        if ((!p.getInventory().getItemInMainHand().getType().equals(Material.RED_ROSE)) || (!p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName()) || (!p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("Flower Wand"))) {
             return;
         }
         if ((event.getAction() == Action.LEFT_CLICK_AIR) || (event.getAction() == Action.LEFT_CLICK_BLOCK)) {
@@ -70,13 +70,14 @@ public class FlowerWand
                 case 0:
                     loc = new Location(p.getWorld(), loc.getX() - 0.5D, loc.getY() + 1.0D, loc.getZ() - 0.5D, loc.getYaw(), loc.getPitch());
             }
-            ParticleEffect.HEART.display(0.0F, 0.0F, 0.0F, 0.0F, 5, loc, 30);
-            p.getLocation().getWorld().playSound(loc, Sound.SILVERFISH_IDLE, 10.0F, 10.0F);
+            //ParticleEffect.HEART.display(0.0F, 0.0F, 0.0F, 0.0F, 5, loc, 30);
+            loc.getWorld().spawnParticle(Particle.HEART, loc, 1);
+            p.getLocation().getWorld().playSound(loc, Sound.ENTITY_SILVERFISH_AMBIENT, 10.0F, 10.0F);
         }
         if ((event.getAction() == Action.RIGHT_CLICK_AIR) || (event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
-            long cooldown = 90000 - (WandExperience.getLevel((String) p.getItemInHand().getItemMeta().getLore().get(2)) - 1) * 6000;
+            long cooldown = 90000 - (WandExperience.getLevel((String) p.getInventory().getItemInMainHand().getItemMeta().getLore().get(2)) - 1) * 6000;
             long timesince = System.currentTimeMillis() - LobbyWands.getCooldown(p.getName(), "flower");
-            final int wandlevel = WandExperience.getLevel((String) p.getItemInHand().getItemMeta().getLore().get(2));
+            final int wandlevel = WandExperience.getLevel((String) p.getInventory().getItemInMainHand().getItemMeta().getLore().get(2));
             if (timesince < cooldown) {
                 p.sendMessage(ChatColor.DARK_PURPLE + "Your wand is still recharging. You can use it again in " + (cooldown - timesince) / 1000L + " seconds.");
             } else {
@@ -96,7 +97,7 @@ public class FlowerWand
 
                 int flowersPlaced = 0;
                 int tried = 0;
-                int flowersAllowed = 2 + WandExperience.getLevel((String) p.getItemInHand().getItemMeta().getLore().get(2)) / 3;
+                int flowersAllowed = 2 + WandExperience.getLevel((String) p.getInventory().getItemInMainHand().getItemMeta().getLore().get(2)) / 3;
                 do {
                     final Location tloc = new Location(p.getWorld(), p.getLocation().getX() + n[rand.nextInt(10)], p.getLocation().getY(), p.getLocation().getZ() + n[((rand.nextInt(10) + 1) % 4)]);
                     Material mat = tloc.getBlock().getType();
@@ -151,7 +152,7 @@ public class FlowerWand
                         }
                     }
                 } while ((flowersPlaced <= flowersAllowed) && (tried <= 20));
-                p.getLocation().getWorld().playSound(p.getLocation(), Sound.FUSE, 10.0F, 10.0F);
+                p.getLocation().getWorld().playSound(p.getLocation(), Sound.ENTITY_TNT_PRIMED, 10.0F, 10.0F);
                 p.sendMessage(ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "Orchideous!");
                 LobbyWands.setCooldown(p.getName(), "flower");
                 this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
