@@ -66,31 +66,33 @@ public class LobbyWands
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if ((sender instanceof Player)) {
             Player p = (Player) sender;
-            p.getInventory().addItem(MagicWand.getMagicWand(false));
-            p.getInventory().addItem(MagicWand.getMagicWand(true));
-            p.getInventory().addItem(BlazeWand.getBlazeWand(false));
-            p.getInventory().addItem(BlazeWand.getBlazeWand(true));
-            p.getInventory().addItem(SpacetimeWand.getSpacetimeWand(false));
-            p.getInventory().addItem(SpacetimeWand.getSpacetimeWand(true));
-            p.getInventory().addItem(SpiderWand.getSpiderWand(false));
-            p.getInventory().addItem(SpiderWand.getSpiderWand(true));
-            p.getInventory().addItem(FlowerWand.getFlowerWand(false));
-            p.getInventory().addItem(FlowerWand.getFlowerWand(true));
-            p.getInventory().addItem(SpellBooks.getFireballBook(1));
-            p.getInventory().addItem(SpellBooks.getLightningBook(1));
-            p.getInventory().addItem(SpellBooks.getTntBook(1));
-            p.getInventory().addItem(SpellBooks.getFireballBook(2));
-            p.getInventory().addItem(SpellBooks.getLightningBook(2));
-            p.getInventory().addItem(SpellBooks.getTntBook(2));
-            p.getInventory().addItem(PetEggs.getBatEgg());
-            p.getInventory().addItem(PetEggs.getCatEgg());
-            p.getInventory().addItem(PetEggs.getBugEgg());
+            if(p.hasPermission("lobbywands.wands")) {
+                p.getInventory().addItem(MagicWand.getMagicWand(false));
+                p.getInventory().addItem(MagicWand.getMagicWand(true));
+                p.getInventory().addItem(BlazeWand.getBlazeWand(false));
+                p.getInventory().addItem(BlazeWand.getBlazeWand(true));
+                p.getInventory().addItem(SpacetimeWand.getSpacetimeWand(false));
+                p.getInventory().addItem(SpacetimeWand.getSpacetimeWand(true));
+                p.getInventory().addItem(SpiderWand.getSpiderWand(false));
+                p.getInventory().addItem(SpiderWand.getSpiderWand(true));
+                p.getInventory().addItem(FlowerWand.getFlowerWand(false));
+                p.getInventory().addItem(FlowerWand.getFlowerWand(true));
+                p.getInventory().addItem(SpellBooks.getFireballBook(1));
+                p.getInventory().addItem(SpellBooks.getLightningBook(1));
+                p.getInventory().addItem(SpellBooks.getTntBook(1));
+                p.getInventory().addItem(SpellBooks.getFireballBook(2));
+                p.getInventory().addItem(SpellBooks.getLightningBook(2));
+                p.getInventory().addItem(SpellBooks.getTntBook(2));
+                p.getInventory().addItem(PetEggs.getBatEgg());
+                p.getInventory().addItem(PetEggs.getCatEgg());
+                p.getInventory().addItem(PetEggs.getBugEgg());
 
-            p.getInventory().addItem(Currency.getGalleons(64));
-            p.getInventory().addItem(Currency.getSickles(64));
-            p.getInventory().addItem(Currency.getKnuts(64));
-            p.sendMessage("You've been given a bunch of random garbage.");
-            return true;
+                p.getInventory().addItem(Currency.getGalleons(64));
+                p.getInventory().addItem(Currency.getSickles(64));
+                p.getInventory().addItem(Currency.getKnuts(64));
+                p.sendMessage("You've been given a bunch of random garbage.");
+                return true;
+            }
         }
         return false;
     }

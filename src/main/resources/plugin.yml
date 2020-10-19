@@ -1,5 +1,5 @@
 name: LobbyWands
-version: 1.3
+version: 1.4
 main: com.sandlotminecraft.lobbywands.LobbyWands
 prefix: LobbyWands
 author: c0wg0d
@@ -12,3 +12,10 @@ softdepend:
 commands:
   wands:
     description: 'Gives a bunch of Lobby Wands items.'
+    permission: lobbywands.wands
+    permission-message: You do not have permission to use this command.
+    usage: /wands
+permissions:
+  lobbywands.wands:
+    description: Allows use of the /wands command.
+    default: op
