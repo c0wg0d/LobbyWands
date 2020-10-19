@@ -23,12 +23,21 @@ public class BlazeWand
         implements Listener {
     private Plugin plugin = Bukkit.getPluginManager().getPlugin("LobbyWands");
 
-    public static ItemStack getBlazeWand() {
+    public static ItemStack getBlazeWand(boolean isMaxLevel) {
         ItemStack wand = new ItemStack(Material.BLAZE_ROD, 1);
         ItemMeta im = wand.getItemMeta();
         im.setDisplayName(ChatColor.RED + "Blaze Wand");
-        im.setLore(Arrays.asList(new String[]{ChatColor.translateAlternateColorCodes('&', "&9&oA Magical Fire Wand"), ChatColor.DARK_AQUA + "0/100 XP", ChatColor.DARK_AQUA + "Level 1 Wand"}));
-        im.addEnchant(Enchantment.DAMAGE_ARTHROPODS, 1, true);
+        String lore1 = ChatColor.translateAlternateColorCodes('&', "&9&oA Magical Fire Wand");
+        String lore2 = ChatColor.DARK_AQUA + "0/100 XP";
+        String lore3 = ChatColor.DARK_AQUA + "Level 1 Wand";
+        int arthropodsLevel = 1;
+        if(isMaxLevel) {
+            lore2 = ChatColor.DARK_AQUA + "0/1000 XP";
+            lore3 = ChatColor.DARK_AQUA + "Max Level Wand";
+            arthropodsLevel = 4;
+        }
+        im.setLore(Arrays.asList(new String[]{lore1, lore2, lore3}));
+        im.addEnchant(Enchantment.DAMAGE_ARTHROPODS, arthropodsLevel, true);
         wand.setItemMeta(im);
         return wand;
     }
@@ -86,7 +95,7 @@ public class BlazeWand
                 fb.setBounce(false);
 
                 fb.setIsIncendiary(false);
-                p.getLocation().getWorld().playSound(p.getLocation(), Sound.ENTITY_FIREWORK_LAUNCH, 10.0F, 10.0F);
+                p.getLocation().getWorld().playSound(p.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 10.0F, 10.0F);
                 LobbyWands.setCooldown(p.getName(), "blaze");
                 p.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "Flagrante!");
 

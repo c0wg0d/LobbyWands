@@ -8,6 +8,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -49,11 +50,14 @@ public class LobbyWands
         getServer().getWorld(optionsWorldName).setTicksPerAnimalSpawns(100);
         getServer().getWorld(optionsWorldName).setTicksPerMonsterSpawns(20);
 
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-            public void run() {
-                LobbyWands.this.getServer().getWorld(optionsWorldName).setTime(18000L);
-            }
-        }, 200L, 200L);
+        getServer().getWorld(optionsWorldName).setTime(18000L);
+        getServer().getWorld(optionsWorldName).setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+
+//        getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+//            public void run() {
+//                LobbyWands.this.getServer().getWorld(optionsWorldName).setTime(18000L);
+//            }
+//        }, 200L, 200L);
     }
 
     public void onDisable() {
@@ -62,15 +66,22 @@ public class LobbyWands
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if ((sender instanceof Player)) {
             Player p = (Player) sender;
-            p.getInventory().addItem(MagicWand.getMagicWand());
-            p.getInventory().addItem(BlazeWand.getBlazeWand());
-            p.getInventory().addItem(SpacetimeWand.getSpacetimeWand());
-            p.getInventory().addItem(SpiderWand.getSpiderWand());
-            p.getInventory().addItem(FlowerWand.getFlowerWand());
+            p.getInventory().addItem(MagicWand.getMagicWand(false));
+            p.getInventory().addItem(MagicWand.getMagicWand(true));
+            p.getInventory().addItem(BlazeWand.getBlazeWand(false));
+            p.getInventory().addItem(BlazeWand.getBlazeWand(true));
+            p.getInventory().addItem(SpacetimeWand.getSpacetimeWand(false));
+            p.getInventory().addItem(SpacetimeWand.getSpacetimeWand(true));
+            p.getInventory().addItem(SpiderWand.getSpiderWand(false));
+            p.getInventory().addItem(SpiderWand.getSpiderWand(true));
+            p.getInventory().addItem(FlowerWand.getFlowerWand(false));
+            p.getInventory().addItem(FlowerWand.getFlowerWand(true));
             p.getInventory().addItem(SpellBooks.getFireballBook(1));
             p.getInventory().addItem(SpellBooks.getLightningBook(1));
+            p.getInventory().addItem(SpellBooks.getTntBook(1));
             p.getInventory().addItem(SpellBooks.getFireballBook(2));
             p.getInventory().addItem(SpellBooks.getLightningBook(2));
+            p.getInventory().addItem(SpellBooks.getTntBook(2));
             p.getInventory().addItem(PetEggs.getBatEgg());
             p.getInventory().addItem(PetEggs.getCatEgg());
             p.getInventory().addItem(PetEggs.getBugEgg());
@@ -86,6 +97,13 @@ public class LobbyWands
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
+        String optionsWorldName = getConfig().getString("options.world-name");
+
+        if(!optionsWorldName.equals(event.getPlayer().getWorld().getName())) {
+            // Don't give them a magic wand if they aren't in Hogwarts world
+            return;
+        }
+
         boolean hasWand = false;
         for (ItemStack item : event.getPlayer().getInventory().getContents()) {
             if ((item != null) &&
@@ -97,7 +115,7 @@ public class LobbyWands
             }
         }
         if (!hasWand) {
-            event.getPlayer().getInventory().addItem(MagicWand.getMagicWand());
+            event.getPlayer().getInventory().addItem(MagicWand.getMagicWand(false));
             event.getPlayer().sendMessage(ChatColor.LIGHT_PURPLE + "You've been given a Magic Wand!");
         }
     }
@@ -204,28 +222,34 @@ public class LobbyWands
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
-        if ((event.getPlayer() != null) && (event.getPlayer().getItemInHand().hasItemMeta()) && (event.getPlayer().getItemInHand().getItemMeta().hasDisplayName()) && (event.getPlayer().getItemInHand().getItemMeta().getDisplayName().contains("Wand"))) {
+        if ((event.getPlayer() != null) && (event.getPlayer().getInventory().getItemInMainHand().hasItemMeta()) && (event.getPlayer().getInventory().getItemInMainHand().getItemMeta().hasDisplayName()) && (event.getPlayer().getItemInHand().getItemMeta().getDisplayName().contains("Wand"))) {
             event.setCancelled(true);
-        } else if ((event.getPlayer() != null) && (event.getPlayer().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS))) {
+        } else if ((event.getPlayer() != null) && (event.getPlayer().getInventory().getItemInMainHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS))) {
             event.setCancelled(true);
         }
     }
 
-    @EventHandler
-    public void onMobSpawn(CreatureSpawnEvent event) {
-        Location loc = event.getEntity().getLocation();
-        World world = event.getEntity().getWorld();
-        Random rand = new Random();
-        if (event.getEntityType() == EntityType.VILLAGER) {
-            return;
-        }
-        if (event.getEntityType() == EntityType.SQUID) {
-            event.setCancelled(true);
-            return;
-        }
-        if ((event.getEntityType() != EntityType.SPIDER) && (event.getEntityType() != EntityType.CAVE_SPIDER) && ((event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL) || (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWNER))) {
-            world.spawnEntity(loc, rand.nextInt(2) == 0 ? EntityType.SPIDER : EntityType.CAVE_SPIDER);
-            event.setCancelled(true);
-        }
-    }
+//    @EventHandler (priority = EventPriority.HIGH, ignoreCancelled = true)
+//    public void onCreatureSpawnEvent(CreatureSpawnEvent event) {
+//        Location loc = event.getEntity().getLocation();
+//        World world = event.getEntity().getWorld();
+//        String optionsWorldName = getConfig().getString("options.world-name");
+//
+//        // Don't do anything if we aren't in Hogwarts world
+//        if(!optionsWorldName.equals(world.getName())) {
+//            return;
+//        }
+//        // Don't do anything if it's a custom plugin spawn
+//        if(event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.CUSTOM) {
+//            return;
+//        }
+//
+//        Random rand = new Random();
+//        // If it's not a spider or cave spider, and it's a natural spawn or a spawner spawn, spawn spiders instead of whatever it was going to be originally
+//        if ((event.getEntityType() != EntityType.SPIDER) && (event.getEntityType() != EntityType.CAVE_SPIDER)
+//                && ((event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL) || (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWNER))) {
+//            world.spawnEntity(loc, rand.nextInt(2) == 0 ? EntityType.SPIDER : EntityType.CAVE_SPIDER);
+//            event.setCancelled(true);
+//        }
+//    }
 }

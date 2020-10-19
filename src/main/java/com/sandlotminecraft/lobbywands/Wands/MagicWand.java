@@ -22,12 +22,21 @@ public class MagicWand
         implements Listener {
     private Plugin plugin = Bukkit.getPluginManager().getPlugin("LobbyWands");
 
-    public static ItemStack getMagicWand() {
+    public static ItemStack getMagicWand(boolean isMaxLevel) {
         ItemStack wand = new ItemStack(Material.STICK, 1);
         ItemMeta im = wand.getItemMeta();
         im.setDisplayName(ChatColor.LIGHT_PURPLE + "Magic Wand");
-        im.setLore(Arrays.asList(new String[]{ChatColor.translateAlternateColorCodes('&', "&9&oMakes Magic Happen :D"), ChatColor.DARK_AQUA + "0/100 XP", ChatColor.DARK_AQUA + "Level 1 Wand"}));
-        im.addEnchant(Enchantment.DAMAGE_ARTHROPODS, 1, true);
+        String lore1 = ChatColor.translateAlternateColorCodes('&', "&9&oMakes Magic Happen :D");
+        String lore2 = ChatColor.DARK_AQUA + "0/100 XP";
+        String lore3 = ChatColor.DARK_AQUA + "Level 1 Wand";
+        int arthropodsLevel = 1;
+        if(isMaxLevel) {
+            lore2 = ChatColor.DARK_AQUA + "0/1000 XP";
+            lore3 = ChatColor.DARK_AQUA + "Max Level Wand";
+            arthropodsLevel = 4;
+        }
+        im.setLore(Arrays.asList(new String[]{lore1, lore2, lore3}));
+        im.addEnchant(Enchantment.DAMAGE_ARTHROPODS, arthropodsLevel, true);
         wand.setItemMeta(im);
         return wand;
     }
@@ -85,7 +94,7 @@ public class MagicWand
                 p.sendMessage(ChatColor.DARK_PURPLE + "Your wand is still recharging. You can use it again in " + (cooldown - timesince) / 1000L + " seconds.");
             } else {
                 p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 300, 0));
-                p.getLocation().getWorld().playSound(p.getLocation(), Sound.ENTITY_ENDERMEN_TELEPORT, 3.0F, 10.0F);
+                p.getLocation().getWorld().playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 3.0F, 10.0F);
                 p.sendMessage(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Invisibilia!");
                 LobbyWands.setCooldown(p.getName(), "magic");
                 this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
@@ -94,7 +103,7 @@ public class MagicWand
                             p.sendMessage(ChatColor.DARK_PURPLE + "You've reappeared!");
                         }
                         if (p.isOnline()) {
-                            p.getLocation().getWorld().playSound(p.getLocation(), Sound.ENTITY_ENDERMEN_TELEPORT, 3.0F, 10.0F);
+                            p.getLocation().getWorld().playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 3.0F, 10.0F);
                         }
                     }
                 }, 300L);

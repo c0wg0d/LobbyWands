@@ -25,13 +25,21 @@ public class FlowerWand
         implements Listener {
     private Plugin plugin = Bukkit.getPluginManager().getPlugin("LobbyWands");
 
-    public static ItemStack getFlowerWand() {
-        ItemStack wand = new ItemStack(Material.RED_ROSE, 1);
-        wand.setDurability((short) 2);
+    public static ItemStack getFlowerWand(boolean isMaxLevel) {
+        ItemStack wand = new ItemStack(Material.ALLIUM, 1);
         ItemMeta im = wand.getItemMeta();
         im.setDisplayName(ChatColor.LIGHT_PURPLE + "Flower Wand");
-        im.setLore(Arrays.asList(new String[]{ChatColor.translateAlternateColorCodes('&', "&9&oMakes &dF&el&fo&bw&5e&9r&ds &9&oHappen :D"), ChatColor.DARK_AQUA + "0/100 XP", ChatColor.DARK_AQUA + "Level 1 Wand"}));
-        im.addEnchant(Enchantment.DAMAGE_ARTHROPODS, 1, true);
+        String lore1 = ChatColor.translateAlternateColorCodes('&', "&9&oMakes &dF&el&fo&bw&5e&9r&ds &9&oHappen :D");
+        String lore2 = ChatColor.DARK_AQUA + "0/100 XP";
+        String lore3 = ChatColor.DARK_AQUA + "Level 1 Wand";
+        int arthropodsLevel = 1;
+        if(isMaxLevel) {
+            lore2 = ChatColor.DARK_AQUA + "0/1000 XP";
+            lore3 = ChatColor.DARK_AQUA + "Max Level Wand";
+            arthropodsLevel = 4;
+        }
+        im.setLore(Arrays.asList(new String[]{lore1, lore2, lore3}));
+        im.addEnchant(Enchantment.DAMAGE_ARTHROPODS, arthropodsLevel, true);
         wand.setItemMeta(im);
         return wand;
     }
@@ -39,7 +47,7 @@ public class FlowerWand
     @EventHandler
     public void onUseFlowerWand(PlayerInteractEvent event) {
         final Player p = event.getPlayer();
-        if ((!p.getInventory().getItemInMainHand().getType().equals(Material.RED_ROSE)) || (!p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName()) || (!p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("Flower Wand"))) {
+        if ((!p.getInventory().getItemInMainHand().getType().equals(Material.ALLIUM)) || (!p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName()) || (!p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("Flower Wand"))) {
             return;
         }
         if ((event.getAction() == Action.LEFT_CLICK_AIR) || (event.getAction() == Action.LEFT_CLICK_BLOCK)) {
@@ -107,7 +115,7 @@ public class FlowerWand
                         mat = blockBelow.getBlock().getType();
                         if ((mat != Material.AIR) && (mat.isSolid())) {
                             BlockState bs = tloc.getBlock().getState();
-                            bs.setType(Material.RED_ROSE);
+                            bs.setType(Material.ALLIUM);
                             bs.setRawData((byte) (rand.nextInt(7) + 1));
                             bs.update(true);
                             flowersPlaced++;
@@ -131,7 +139,7 @@ public class FlowerWand
                         mat = blockAbove.getBlock().getType();
                         if ((mat == Material.AIR) && (tloc.getBlock().getType().isSolid())) {
                             BlockState bs = blockAbove.getBlock().getState();
-                            bs.setType(Material.RED_ROSE);
+                            bs.setType(Material.ALLIUM);
                             bs.setRawData((byte) (rand.nextInt(7) + 1));
                             bs.update(true);
                             flowersPlaced++;
@@ -168,7 +176,7 @@ public class FlowerWand
 
     @EventHandler
     public void onCreateItem(ItemSpawnEvent event) {
-        if (event.getEntity().getItemStack().getType() == Material.RED_ROSE) {
+        if (event.getEntity().getItemStack().getType() == Material.ALLIUM) {
             event.setCancelled(true);
         }
     }

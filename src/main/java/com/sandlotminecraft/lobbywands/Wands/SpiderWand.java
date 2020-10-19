@@ -21,12 +21,21 @@ public class SpiderWand
         implements Listener {
     private Plugin plugin = Bukkit.getPluginManager().getPlugin("LobbyWands");
 
-    public static ItemStack getSpiderWand() {
+    public static ItemStack getSpiderWand(boolean isMaxLevel) {
         ItemStack wand = new ItemStack(Material.TRIPWIRE_HOOK, 1);
         ItemMeta im = wand.getItemMeta();
         im.setDisplayName(ChatColor.GRAY + "Spider Wand");
-        im.setLore(Arrays.asList(new String[]{ChatColor.translateAlternateColorCodes('&', "&9&oSpecial Extermination Edition"), ChatColor.DARK_AQUA + "0/100 XP", ChatColor.DARK_AQUA + "Level 1 Wand"}));
-        im.addEnchant(Enchantment.DAMAGE_ARTHROPODS, 2, true);
+        String lore1 = ChatColor.translateAlternateColorCodes('&', "&9&oSpecial Extermination Edition");
+        String lore2 = ChatColor.DARK_AQUA + "0/100 XP";
+        String lore3 = ChatColor.DARK_AQUA + "Level 1 Wand";
+        int arthropodsLevel = 2;
+        if(isMaxLevel) {
+            lore2 = ChatColor.DARK_AQUA + "0/1000 XP";
+            lore3 = ChatColor.DARK_AQUA + "Max Level Wand";
+            arthropodsLevel = 5;
+        }
+        im.setLore(Arrays.asList(new String[]{lore1, lore2, lore3}));
+        im.addEnchant(Enchantment.DAMAGE_ARTHROPODS, arthropodsLevel, true);
         wand.setItemMeta(im);
         return wand;
     }

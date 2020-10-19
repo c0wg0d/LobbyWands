@@ -121,7 +121,7 @@ public class SpiderHandler
                             }
                         }
                         warpspiders[i].getLocation().getWorld().playEffect(warpspiders[i].getLocation(), Effect.ENDER_SIGNAL, 5);
-                        warpspiders[i].getLocation().getWorld().playSound(warpspiders[i].getLocation(), Sound.ENTITY_ENDERMEN_TELEPORT, 10.0F, 10.0F);
+                        warpspiders[i].getLocation().getWorld().playSound(warpspiders[i].getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 10.0F, 10.0F);
                         warpspiders[i].teleport(loc);
                     }
                 }
@@ -205,7 +205,7 @@ public class SpiderHandler
                 if ((spider instanceof LivingEntity)) {
                     p.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "Mutatio Flora!");
                     event.setDamage(0.0D);
-                    ItemStack rosebush = new ItemStack(175, 1, (short) 0, Byte.valueOf((byte) 4));
+                    ItemStack rosebush = new ItemStack(Material.ROSE_BUSH, 1);
                     Item flower = spider.getWorld().dropItem(spider.getLocation(), rosebush);
                     flower.setPickupDelay(1000);
                     spider.addPassenger(flower);

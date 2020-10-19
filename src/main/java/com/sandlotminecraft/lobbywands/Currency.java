@@ -19,7 +19,7 @@ public class Currency
     private Plugin plugin = Bukkit.getPluginManager().getPlugin("LobbyWands");
 
     public static ItemStack getGalleons(Integer amount) {
-        ItemStack galleon = new ItemStack(Material.DOUBLE_PLANT, amount.intValue());
+        ItemStack galleon = new ItemStack(Material.SUNFLOWER, amount.intValue());
         ItemMeta gim = galleon.getItemMeta();
         gim.addEnchant(Enchantment.LOOT_BONUS_BLOCKS, 1, true);
         gim.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + "Gold Galleon");
@@ -43,7 +43,7 @@ public class Currency
     }
 
     public static ItemStack getKnuts(Integer amount) {
-        ItemStack galleon = new ItemStack(351, amount.intValue(), (short) 0, Byte.valueOf((byte) 14));
+        ItemStack galleon = new ItemStack(Material.ORANGE_DYE, amount.intValue());
         ItemMeta gim = galleon.getItemMeta();
         gim.addEnchant(Enchantment.LOOT_BONUS_BLOCKS, 1, true);
         gim.setDisplayName(ChatColor.GOLD + "" + ChatColor.BOLD + "Bronze Knut");

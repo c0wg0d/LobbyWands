@@ -24,12 +24,21 @@ public class SpacetimeWand
         implements Listener {
     private Plugin plugin = Bukkit.getPluginManager().getPlugin("LobbyWands");
 
-    public static ItemStack getSpacetimeWand() {
-        ItemStack wand = new ItemStack(Material.REDSTONE_TORCH_ON, 1);
+    public static ItemStack getSpacetimeWand(boolean isMaxLevel) {
+        ItemStack wand = new ItemStack(Material.REDSTONE_TORCH, 1);
         ItemMeta im = wand.getItemMeta();
         im.setDisplayName(ChatColor.AQUA + "Spacetime Wand");
-        im.setLore(Arrays.asList(new String[]{ChatColor.translateAlternateColorCodes('&', "&9&oBends Time and Space :o"), ChatColor.DARK_AQUA + "0/100 XP", ChatColor.DARK_AQUA + "Level 1 Wand"}));
-        im.addEnchant(Enchantment.DAMAGE_ARTHROPODS, 1, true);
+        String lore1 = ChatColor.translateAlternateColorCodes('&', "&9&oBends Time and Space :o");
+        String lore2 = ChatColor.DARK_AQUA + "0/100 XP";
+        String lore3 = ChatColor.DARK_AQUA + "Level 1 Wand";
+        int arthropodsLevel = 1;
+        if(isMaxLevel) {
+            lore2 = ChatColor.DARK_AQUA + "0/1000 XP";
+            lore3 = ChatColor.DARK_AQUA + "Max Level Wand";
+            arthropodsLevel = 4;
+        }
+        im.setLore(Arrays.asList(new String[]{lore1, lore2, lore3}));
+        im.addEnchant(Enchantment.DAMAGE_ARTHROPODS, arthropodsLevel, true);
         wand.setItemMeta(im);
         return wand;
     }
@@ -37,7 +46,7 @@ public class SpacetimeWand
     @EventHandler
     public void onUseSpacetimeWand(PlayerInteractEvent event) {
         final Player p = event.getPlayer();
-        if ((!p.getInventory().getItemInMainHand().getType().equals(Material.REDSTONE_TORCH_ON)) || (!p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName()) || (!p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("Spacetime"))) {
+        if ((!p.getInventory().getItemInMainHand().getType().equals(Material.REDSTONE_TORCH)) || (!p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName()) || (!p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("Spacetime"))) {
             return;
         }
         if ((event.getAction() == Action.LEFT_CLICK_AIR) || (event.getAction() == Action.LEFT_CLICK_BLOCK)) {
@@ -77,7 +86,7 @@ public class SpacetimeWand
                     loc = new Location(p.getWorld(), loc.getX() - 0.5D, loc.getY(), loc.getZ() - 0.5D, loc.getYaw(), loc.getPitch());
             }
             loc.getWorld().playEffect(loc, Effect.ENDER_SIGNAL, dir, 10);
-            loc.getWorld().playSound(loc, Sound.BLOCK_NOTE_HAT, 3.0F, 10.0F);
+            loc.getWorld().playSound(loc, Sound.BLOCK_NOTE_BLOCK_HAT, 3.0F, 10.0F);
         }
         if ((event.getAction() == Action.RIGHT_CLICK_AIR) || (event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
             long cooldown = 90000 - (WandExperience.getLevel((String) p.getInventory().getItemInMainHand().getItemMeta().getLore().get(2)) - 1) * 6000;
@@ -86,7 +95,7 @@ public class SpacetimeWand
             if (timesince < cooldown) {
                 p.sendMessage(ChatColor.DARK_PURPLE + "Your wand is still recharging. You can use it again in " + (cooldown - timesince) / 1000L + " seconds.");
             } else {
-                p.getLocation().getWorld().playSound(p.getLocation(), Sound.ENTITY_ENDERMEN_TELEPORT, 10.0F, 10.0F);
+                p.getLocation().getWorld().playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 10.0F, 10.0F);
 
                 Location loc = p.getLocation();
                 float yaw = loc.getYaw();
