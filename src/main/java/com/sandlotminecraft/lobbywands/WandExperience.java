@@ -33,6 +33,11 @@ public class WandExperience
         if ((event.getEntityType() != EntityType.SPIDER) && (event.getEntityType() != EntityType.CAVE_SPIDER)) {
             return;
         }
+
+        if(event.getEntity().getWorld().getName() != plugin.getConfig().getString("options.world-name")) {
+            return;
+        }
+
         if ((event.getEntity().getPassenger() instanceof Item)) {
             event.getEntity().getPassenger().remove();
         }
@@ -167,13 +172,13 @@ public class WandExperience
                 p.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "Your wand has reached its maximum power!");
                 lore3 = ChatColor.DARK_AQUA + "Max Level Wand";
             }
-            p.setLevel(newlevel);
-            p.setExp(xp[0] / xp[1]);
+//            p.setLevel(newlevel);
+//            p.setExp(xp[0] / xp[1]);
         }
         lore2 = ChatColor.DARK_AQUA + "" + xp[0] + "/" + xp[1] + " XP";
         im.setLore(Arrays.asList(new String[]{lore1, lore2, lore3}));
         p.getInventory().getItemInMainHand().setItemMeta(im);
-        p.setExp(xp[0] / xp[1]);
+        //p.setExp(xp[0] / xp[1]);
     }
 
     private int[] getXP(String lore) {
@@ -198,20 +203,20 @@ public class WandExperience
         return level;
     }
 
-    @EventHandler
-    public void onInventoryEvent(PlayerItemHeldEvent event) {
-        Player p = event.getPlayer();
-        ItemStack wand = p.getInventory().getItem(event.getNewSlot());
-        if ((wand != null) && (wand.hasItemMeta()) && (wand.getItemMeta().hasDisplayName()) && (wand.getItemMeta().getDisplayName().contains("Wand"))) {
-            int wandlevel = getLevel((String) wand.getItemMeta().getLore().get(2));
-            int[] xp = getXP(ChatColor.stripColor((String) wand.getItemMeta().getLore().get(1)));
-            p.setExp(xp[0] / xp[1]);
-            p.setLevel(wandlevel);
-        } else {
-            p.setExp(0.0F);
-            p.setLevel(0);
-        }
-    }
+//    @EventHandler
+//    public void onInventoryEvent(PlayerItemHeldEvent event) {
+//        Player p = event.getPlayer();
+//        ItemStack wand = p.getInventory().getItem(event.getNewSlot());
+//        if ((wand != null) && (wand.hasItemMeta()) && (wand.getItemMeta().hasDisplayName()) && (wand.getItemMeta().getDisplayName().contains("Wand"))) {
+//            int wandlevel = getLevel((String) wand.getItemMeta().getLore().get(2));
+//            int[] xp = getXP(ChatColor.stripColor((String) wand.getItemMeta().getLore().get(1)));
+//            p.setExp(xp[0] / xp[1]);
+//            p.setLevel(wandlevel);
+//        } else {
+//            p.setExp(0.0F);
+//            p.setLevel(0);
+//        }
+//    }
 
     @EventHandler
     public void onItemPickup(PlayerPickupItemEvent event) {

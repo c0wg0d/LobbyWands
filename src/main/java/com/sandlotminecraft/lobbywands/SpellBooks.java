@@ -139,23 +139,23 @@ public class SpellBooks
         lore.set(2, ChatColor.WHITE + "" + ChatColor.ITALIC + "Uses Remaining: " + ChatColor.GREEN + uses);
         im.setLore(lore);
         book.setItemMeta(im);
-        player.setExp(uses / 20.0F);
+        //player.setExp(uses / 20.0F);
         if (uses == 0) {
             player.getInventory().remove(book);
             player.sendMessage(ChatColor.DARK_PURPLE + "Your Spellbook has been used up.");
         }
     }
 
-    @EventHandler
-    public void onInventoryEvent(PlayerItemHeldEvent event) {
-        Player p = event.getPlayer();
-        ItemStack book = p.getInventory().getItem(event.getNewSlot());
-        if ((book != null) && (book.hasItemMeta()) && (book.getItemMeta().hasDisplayName()) && (book.getItemMeta().getDisplayName().contains("Spellbook"))) {
-            String[] tmp = ChatColor.stripColor((String) book.getItemMeta().getLore().get(2)).split("\\s+");
-            int remaining = Integer.parseInt(tmp[2]);
-            p.setExp(remaining / 20.0F);
-        }
-    }
+//    @EventHandler
+//    public void onInventoryEvent(PlayerItemHeldEvent event) {
+//        Player p = event.getPlayer();
+//        ItemStack book = p.getInventory().getItem(event.getNewSlot());
+//        if ((book != null) && (book.hasItemMeta()) && (book.getItemMeta().hasDisplayName()) && (book.getItemMeta().getDisplayName().contains("Spellbook"))) {
+//            String[] tmp = ChatColor.stripColor((String) book.getItemMeta().getLore().get(2)).split("\\s+");
+//            int remaining = Integer.parseInt(tmp[2]);
+//            p.setExp(remaining / 20.0F);
+//        }
+//    }
 
     private Vector getRandomVector(double min, double max) {
         Random rx = new Random();

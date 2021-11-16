@@ -34,7 +34,12 @@ public class SpiderHandler
         if (!(event.getDamager() instanceof Player)) {
             return;
         }
+
         final Player p = ((Player) event.getDamager()).getPlayer();
+
+        if(p.getWorld().getName() != plugin.getConfig().getString("options.world-name")) {
+            return;
+        }
 
         Entity spider = event.getEntity();
         if ((p.getInventory().getItemInMainHand().hasItemMeta()) && (p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName()) && (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("Magic"))) {
