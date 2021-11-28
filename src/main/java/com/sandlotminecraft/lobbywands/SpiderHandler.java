@@ -3,16 +3,11 @@ package com.sandlotminecraft.lobbywands;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.hanging.HangingBreakByEntityEvent;
-import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 
@@ -37,7 +32,7 @@ public class SpiderHandler
 
         final Player p = ((Player) event.getDamager()).getPlayer();
 
-        if(p.getWorld().getName() != plugin.getConfig().getString("options.world-name")) {
+        if(!p.getWorld().getName().equalsIgnoreCase(plugin.getConfig().getString("options.world-name"))) {
             return;
         }
 
