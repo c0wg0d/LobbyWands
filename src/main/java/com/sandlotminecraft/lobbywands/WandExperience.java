@@ -24,12 +24,14 @@ import java.util.Random;
 public class WandExperience
         implements Listener {
     private Plugin plugin = Bukkit.getPluginManager().getPlugin("LobbyWands");
-    public static Player pSetExplosion;
-    public static boolean flowerplaced = false;
+    public static Player PlayerToCredit;
+    public static boolean CausedByPlayer = false;
 
     @EventHandler
-    public void onSpiderDeath(EntityDeathEvent event) {
-        if ((event.getEntityType() != EntityType.SPIDER) && (event.getEntityType() != EntityType.CAVE_SPIDER)) {
+    //public void onSpiderDeath(EntityDeathEvent event) {
+    public void onDeath(EntityDeathEvent event) {
+
+        if(!(event.getEntity() instanceof Monster)) {
             return;
         }
 
@@ -41,25 +43,37 @@ public class WandExperience
             event.getEntity().getPassenger().remove();
         }
 
-        event.setDroppedExp(0);
-        if (event.getDrops() != null) {
-            event.getDrops().clear();
-        }
         Player p = null;
         if (event.getEntity().getKiller() == null) {
             EntityDamageEvent ede = event.getEntity().getLastDamageCause();
+
             if ((ede instanceof EntityDamageByEntityEvent)) {
                 Entity lastDamager = ((EntityDamageByEntityEvent) ede).getDamager();
                 if (((lastDamager instanceof Fireball)) &&
                         ((((Fireball) lastDamager).getShooter() instanceof Player))) {
                     p = (Player) ((Fireball) lastDamager).getShooter();
-                    if ((!p.getInventory().getItemInMainHand().hasItemMeta()) || (!p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName()) || (!p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("Blaze"))) {
+                    if ((!p.getInventory().getItemInMainHand().hasItemMeta()) || (!p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName())
+                            || (!p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("Blaze"))) {
                         return;
                     }
                 }
-            } else if (flowerplaced) {
-                p = pSetExplosion;
-                if ((!p.getInventory().getItemInMainHand().hasItemMeta()) || (!p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName()) || (!p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("Flower"))) {
+
+                if (((lastDamager instanceof ShulkerBullet)) &&
+                        ((((ShulkerBullet) lastDamager).getShooter() instanceof Player))) {
+                    p = (Player) ((ShulkerBullet) lastDamager).getShooter();
+                    if ((!p.getInventory().getItemInMainHand().hasItemMeta()) || (!p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName())
+                            || (!p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("Levitation"))) {
+                        return;
+                    }
+                }
+            } else if (CausedByPlayer) {
+                p = PlayerToCredit;
+                if ((!p.getInventory().getItemInMainHand().hasItemMeta()) || (!p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName())
+                        || (!p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("Flower"))) {
+                    return;
+                }
+                if ((!p.getInventory().getItemInMainHand().hasItemMeta()) || (!p.getInventory().getItemInMainHand().getItemMeta().hasDisplayName())
+                        || (!p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains("Levitation"))) {
                     return;
                 }
             }
@@ -68,7 +82,7 @@ public class WandExperience
             }
         } else {
             p = event.getEntity().getKiller();
-            flowerplaced = false;
+            CausedByPlayer = false;
         }
         if (!p.getInventory().getItemInMainHand().hasItemMeta()) {
             return;
@@ -96,6 +110,9 @@ public class WandExperience
                 break;
             case "flower":
                 coinsDropped = rand.nextInt(67);
+                break;
+            case "levitation":
+                coinsDropped = rand.nextInt(72);
                 break;
             case "spellbook":
                 coinsDropped = rand.nextInt(10);
@@ -151,13 +168,58 @@ public class WandExperience
             xp[0] = 0;
             xp[1] = (newlevel * 100);
             lore3 = ChatColor.DARK_AQUA + "Level " + newlevel + " Wand";
-            p.sendMessage(ChatColor.GOLD + " - Cooldown Time is Now " + (90 - newlevel * 6) + " Seconds!");
-            if ((newlevel == 4) || (newlevel == 7) || (newlevel == 10)) {
+            p.sendMessage(ChatColor.GOLD + " - Cooldown time is now " + (90 - newlevel * 6) + " seconds!");
+
+            // Magic Wand - Increase Sharpness
+            if ((newlevel == 4) || (newlevel == 6) || (newlevel == 8 || (newlevel == 10))
+                    && (wand.getDisplayName().contains("Magic"))) {
+                int enchantLevel = im.getEnchantLevel(Enchantment.DAMAGE_ALL);
+                im.removeEnchant(Enchantment.DAMAGE_ALL);
+                im.addEnchant(Enchantment.DAMAGE_ALL, enchantLevel + 1, true);
+                p.sendMessage(ChatColor.GOLD + " - Enchantment level has increased!");
+            }
+
+            // Blaze Wand - Fire Aspect
+            else if ((newlevel == 5) && (wand.getDisplayName().contains("Blaze"))) {
+                im.removeEnchant(Enchantment.FIRE_ASPECT);
+                im.addEnchant(Enchantment.FIRE_ASPECT, 2, true);
+                p.sendMessage(ChatColor.GOLD + " - Enchantment level has increased!");
+            }
+
+            // Spacetime Wand - Knockback
+            else if ((newlevel == 5) && (wand.getDisplayName().contains("Spacetime"))) {
+                im.removeEnchant(Enchantment.KNOCKBACK);
+                im.addEnchant(Enchantment.KNOCKBACK, 2, true);
+                p.sendMessage(ChatColor.GOLD + " - Enchantment level has increased!");
+            }
+
+            // Spider Wand - Bane of Arthropods
+            else if ((newlevel == 4) || (newlevel == 7) || (newlevel == 10)
+                    && (wand.getDisplayName().contains("Spider"))) {
                 int enchantLevel = im.getEnchantLevel(Enchantment.DAMAGE_ARTHROPODS);
                 im.removeEnchant(Enchantment.DAMAGE_ARTHROPODS);
                 im.addEnchant(Enchantment.DAMAGE_ARTHROPODS, enchantLevel + 1, true);
-                p.sendMessage(ChatColor.GOLD + " - Enchantment Level has Increased!");
+                p.sendMessage(ChatColor.GOLD + " - Enchantment level has increased!");
             }
+
+            // Flower Wand - Smite
+            else if ((newlevel == 4) || (newlevel == 6) || (newlevel == 8 || (newlevel == 10))
+                    && (wand.getDisplayName().contains("Flower"))) {
+                int enchantLevel = im.getEnchantLevel(Enchantment.DAMAGE_UNDEAD);
+                im.removeEnchant(Enchantment.DAMAGE_UNDEAD);
+                im.addEnchant(Enchantment.DAMAGE_UNDEAD, enchantLevel + 1, true);
+                p.sendMessage(ChatColor.GOLD + " - Enchantment level has increased!");
+            }
+
+            // Levitation Wand - Sharpness
+            else if ((newlevel == 4) || (newlevel == 6) || (newlevel == 8 || (newlevel == 10))
+                    && (wand.getDisplayName().contains("Levitation"))) {
+                int enchantLevel = im.getEnchantLevel(Enchantment.DAMAGE_ALL);
+                im.removeEnchant(Enchantment.DAMAGE_ALL);
+                im.addEnchant(Enchantment.DAMAGE_ALL, enchantLevel + 1, true);
+                p.sendMessage(ChatColor.GOLD + " - Enchantment level has increased!");
+            }
+
             if ((newlevel == 5) && (wand.getDisplayName().contains("Spider"))) {
                 p.sendMessage(ChatColor.GOLD + " - Your Strength effect is now more powerful!");
             }
@@ -171,13 +233,10 @@ public class WandExperience
                 p.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "Your wand has reached its maximum power!");
                 lore3 = ChatColor.DARK_AQUA + "Max Level Wand";
             }
-//            p.setLevel(newlevel);
-//            p.setExp(xp[0] / xp[1]);
         }
         lore2 = ChatColor.DARK_AQUA + "" + xp[0] + "/" + xp[1] + " XP";
         im.setLore(Arrays.asList(new String[]{lore1, lore2, lore3}));
         p.getInventory().getItemInMainHand().setItemMeta(im);
-        //p.setExp(xp[0] / xp[1]);
     }
 
     private int[] getXP(String lore) {
@@ -201,21 +260,6 @@ public class WandExperience
         int level = Integer.parseInt(levstr[1]);
         return level;
     }
-
-//    @EventHandler
-//    public void onInventoryEvent(PlayerItemHeldEvent event) {
-//        Player p = event.getPlayer();
-//        ItemStack wand = p.getInventory().getItem(event.getNewSlot());
-//        if ((wand != null) && (wand.hasItemMeta()) && (wand.getItemMeta().hasDisplayName()) && (wand.getItemMeta().getDisplayName().contains("Wand"))) {
-//            int wandlevel = getLevel((String) wand.getItemMeta().getLore().get(2));
-//            int[] xp = getXP(ChatColor.stripColor((String) wand.getItemMeta().getLore().get(1)));
-//            p.setExp(xp[0] / xp[1]);
-//            p.setLevel(wandlevel);
-//        } else {
-//            p.setExp(0.0F);
-//            p.setLevel(0);
-//        }
-//    }
 
     @EventHandler
     public void onItemPickup(PlayerPickupItemEvent event) {

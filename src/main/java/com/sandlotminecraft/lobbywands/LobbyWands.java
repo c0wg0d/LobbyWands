@@ -1,17 +1,15 @@
 package com.sandlotminecraft.lobbywands;
 
 import com.sandlotminecraft.lobbywands.Wands.*;
+import net.milkbowl.vault.chat.Chat;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -20,7 +18,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
-import java.util.Random;
 
 public class LobbyWands
         extends JavaPlugin
@@ -31,33 +28,18 @@ public class LobbyWands
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new MagicWand(), this);
         getServer().getPluginManager().registerEvents(new BlazeWand(), this);
-        getServer().getPluginManager().registerEvents(new SpiderHandler(), this);
+        getServer().getPluginManager().registerEvents(new MonsterHandler(), this);
         getServer().getPluginManager().registerEvents(new SpacetimeWand(), this);
         getServer().getPluginManager().registerEvents(new SpiderWand(), this);
         getServer().getPluginManager().registerEvents(new FlowerWand(), this);
+        getServer().getPluginManager().registerEvents(new LevitationWand(), this);
         getServer().getPluginManager().registerEvents(new WandExperience(), this);
         getServer().getPluginManager().registerEvents(new Currency(), this);
         getServer().getPluginManager().registerEvents(new SpellBooks(), this);
-        getServer().getPluginManager().registerEvents(new PetEggs(), this);
+        //getServer().getPluginManager().registerEvents(new PetEggs(), this);
         getCommand("wands").setExecutor(this);
 
-
-        getServer().clearRecipes();
-
         String optionsWorldName = getConfig().getString("options.world-name");
-
-        getServer().getWorld(optionsWorldName).setMonsterSpawnLimit(100);
-        getServer().getWorld(optionsWorldName).setTicksPerAnimalSpawns(100);
-        getServer().getWorld(optionsWorldName).setTicksPerMonsterSpawns(20);
-
-        getServer().getWorld(optionsWorldName).setTime(18000L);
-        getServer().getWorld(optionsWorldName).setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
-
-//        getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-//            public void run() {
-//                LobbyWands.this.getServer().getWorld(optionsWorldName).setTime(18000L);
-//            }
-//        }, 200L, 200L);
     }
 
     public void onDisable() {
@@ -77,15 +59,17 @@ public class LobbyWands
                 p.getInventory().addItem(SpiderWand.getSpiderWand(true));
                 p.getInventory().addItem(FlowerWand.getFlowerWand(false));
                 p.getInventory().addItem(FlowerWand.getFlowerWand(true));
+                p.getInventory().addItem(LevitationWand.getLevitationWand(false));
+                p.getInventory().addItem(LevitationWand.getLevitationWand(true));
                 p.getInventory().addItem(SpellBooks.getFireballBook(1));
                 p.getInventory().addItem(SpellBooks.getLightningBook(1));
                 p.getInventory().addItem(SpellBooks.getTntBook(1));
                 p.getInventory().addItem(SpellBooks.getFireballBook(2));
                 p.getInventory().addItem(SpellBooks.getLightningBook(2));
                 p.getInventory().addItem(SpellBooks.getTntBook(2));
-                p.getInventory().addItem(PetEggs.getBatEgg());
-                p.getInventory().addItem(PetEggs.getCatEgg());
-                p.getInventory().addItem(PetEggs.getBugEgg());
+//                p.getInventory().addItem(PetEggs.getBatEgg());
+//                p.getInventory().addItem(PetEggs.getCatEgg());
+//                p.getInventory().addItem(PetEggs.getBugEgg());
 
                 p.getInventory().addItem(Currency.getGalleons(64));
                 p.getInventory().addItem(Currency.getSickles(64));
@@ -107,7 +91,8 @@ public class LobbyWands
         }
 
         boolean hasWand = false;
-        for (ItemStack item : event.getPlayer().getInventory().getContents()) {
+        Player p = event.getPlayer();
+        for (ItemStack item : p.getInventory().getContents()) {
             if ((item != null) &&
                     (item.getType() == Material.STICK) &&
                     (item.hasItemMeta()) &&
@@ -115,10 +100,96 @@ public class LobbyWands
                     (item.getItemMeta().getDisplayName().contains("Magic"))) {
                 hasWand = true;
             }
+
+            // Upgrade to new wand enchantments
+            // Magic Wand, upgrade from Bane of Arthropods to Sharpness
+            if ((item != null) &&
+                    (item.getType() == Material.STICK) &&
+                    (item.hasItemMeta()) &&
+                    (item.getItemMeta().hasDisplayName()) &&
+                    (item.getItemMeta().getDisplayName().contains("Magic"))) {
+                int wandlevel = WandExperience.getLevel((String) item.getItemMeta().getLore().get(2));
+                if (item.containsEnchantment(Enchantment.DAMAGE_ARTHROPODS)) {
+                    item.removeEnchantment(Enchantment.DAMAGE_ARTHROPODS);
+                    if (wandlevel >= 1 && wandlevel <= 3) {
+                        item.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
+                    } else if (wandlevel >= 4 && wandlevel <= 5) {
+                        item.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 2);
+                    } else if (wandlevel >= 6 && wandlevel <= 7) {
+                        item.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 3);
+                    } else if (wandlevel >= 8 && wandlevel <= 9) {
+                        item.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 4);
+                    } else if (wandlevel == 10) {
+                        item.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 5);
+                    }
+                    p.sendMessage(ChatColor.GOLD + "Your Magic Wand has been upgraded with the Sharpness enchantment!");
+                }
+            }
+
+            // Blaze Wand, upgrade from Bane of Arthropods to Fire Aspect
+            if ((item != null) &&
+                    (item.getType() == Material.BLAZE_ROD) &&
+                    (item.hasItemMeta()) &&
+                    (item.getItemMeta().hasDisplayName()) &&
+                    (item.getItemMeta().getDisplayName().contains("Blaze"))) {
+                int wandlevel = WandExperience.getLevel((String) item.getItemMeta().getLore().get(2));
+                if (item.containsEnchantment(Enchantment.DAMAGE_ARTHROPODS)) {
+                    item.removeEnchantment(Enchantment.DAMAGE_ARTHROPODS);
+                    if (wandlevel >= 1 && wandlevel <= 5) {
+                        item.addUnsafeEnchantment(Enchantment.FIRE_ASPECT, 1);
+                    } else if (wandlevel >= 5) {
+                        item.addUnsafeEnchantment(Enchantment.FIRE_ASPECT, 2);
+                    }
+                    p.sendMessage(ChatColor.GOLD + "Your Blaze Wand has been upgraded with the Fire Aspect enchantment!");
+                }
+            }
+
+            // Spacetime Wand, upgrade from Bane of Arthropods to Fire Aspect
+            if ((item != null) &&
+                    (item.getType() == Material.REDSTONE_TORCH) &&
+                    (item.hasItemMeta()) &&
+                    (item.getItemMeta().hasDisplayName()) &&
+                    (item.getItemMeta().getDisplayName().contains("Spacetime"))) {
+                int wandlevel = WandExperience.getLevel((String) item.getItemMeta().getLore().get(2));
+                if (item.containsEnchantment(Enchantment.DAMAGE_ARTHROPODS)) {
+                    item.removeEnchantment(Enchantment.DAMAGE_ARTHROPODS);
+                    if (wandlevel >= 1 && wandlevel <= 5) {
+                        item.addUnsafeEnchantment(Enchantment.KNOCKBACK, 1);
+                    } else if (wandlevel >= 5) {
+                        item.addUnsafeEnchantment(Enchantment.KNOCKBACK, 2);
+                    }
+                    p.sendMessage(ChatColor.GOLD + "Your Spacetime Wand has been upgraded with the Knockback enchantment!");
+                }
+            }
+
+            // Flower Wand, upgrade from Bane of Arthropods to Sharpness
+            if ((item != null) &&
+                    (item.getType() == Material.ALLIUM) &&
+                    (item.hasItemMeta()) &&
+                    (item.getItemMeta().hasDisplayName()) &&
+                    (item.getItemMeta().getDisplayName().contains("Flower"))) {
+                int wandlevel = WandExperience.getLevel((String) item.getItemMeta().getLore().get(2));
+                if (item.containsEnchantment(Enchantment.DAMAGE_ARTHROPODS)) {
+                    item.removeEnchantment(Enchantment.DAMAGE_ARTHROPODS);
+                    if (wandlevel >= 1 && wandlevel <= 3) {
+                        item.addUnsafeEnchantment(Enchantment.DAMAGE_UNDEAD, 1);
+                    } else if (wandlevel >= 4 && wandlevel <= 5) {
+                        item.addUnsafeEnchantment(Enchantment.DAMAGE_UNDEAD, 2);
+                    } else if (wandlevel >= 6 && wandlevel <= 7) {
+                        item.addUnsafeEnchantment(Enchantment.DAMAGE_UNDEAD, 3);
+                    } else if (wandlevel >= 8 && wandlevel <= 9) {
+                        item.addUnsafeEnchantment(Enchantment.DAMAGE_UNDEAD, 4);
+                    } else if (wandlevel == 10) {
+                        item.addUnsafeEnchantment(Enchantment.DAMAGE_UNDEAD, 5);
+                    }
+                    p.sendMessage(ChatColor.GOLD + "Your Flower Wand has been upgraded with the Sharpness enchantment!");
+                }
+            }
         }
+
         if (!hasWand) {
-            event.getPlayer().getInventory().addItem(MagicWand.getMagicWand(false));
-            event.getPlayer().sendMessage(ChatColor.LIGHT_PURPLE + "You've been given a Magic Wand!");
+            p.getInventory().addItem(MagicWand.getMagicWand(false));
+            p.sendMessage(ChatColor.LIGHT_PURPLE + "You've been given a Magic Wand!");
         }
     }
 
@@ -191,6 +262,9 @@ public class LobbyWands
             if (itemName.contains("Flower")) {
                 return "flower";
             }
+            if (itemName.contains("Levitation")) {
+                return "levitation";
+            }
             return "null";
         }
         return "spellbook";
@@ -224,34 +298,12 @@ public class LobbyWands
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
-        if ((event.getPlayer() != null) && (event.getPlayer().getInventory().getItemInMainHand().hasItemMeta()) && (event.getPlayer().getInventory().getItemInMainHand().getItemMeta().hasDisplayName()) && (event.getPlayer().getItemInHand().getItemMeta().getDisplayName().contains("Wand"))) {
+        if ((event.getPlayer() != null) && (event.getPlayer().getInventory().getItemInMainHand().hasItemMeta())
+                && (event.getPlayer().getInventory().getItemInMainHand().getItemMeta().hasDisplayName())
+                && (event.getPlayer().getItemInHand().getItemMeta().getDisplayName().contains("Wand"))) {
             event.setCancelled(true);
         } else if ((event.getPlayer() != null) && (event.getPlayer().getInventory().getItemInMainHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS))) {
             event.setCancelled(true);
         }
     }
-
-//    @EventHandler (priority = EventPriority.HIGH, ignoreCancelled = true)
-//    public void onCreatureSpawnEvent(CreatureSpawnEvent event) {
-//        Location loc = event.getEntity().getLocation();
-//        World world = event.getEntity().getWorld();
-//        String optionsWorldName = getConfig().getString("options.world-name");
-//
-//        // Don't do anything if we aren't in Hogwarts world
-//        if(!optionsWorldName.equals(world.getName())) {
-//            return;
-//        }
-//        // Don't do anything if it's a custom plugin spawn
-//        if(event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.CUSTOM) {
-//            return;
-//        }
-//
-//        Random rand = new Random();
-//        // If it's not a spider or cave spider, and it's a natural spawn or a spawner spawn, spawn spiders instead of whatever it was going to be originally
-//        if ((event.getEntityType() != EntityType.SPIDER) && (event.getEntityType() != EntityType.CAVE_SPIDER)
-//                && ((event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL) || (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWNER))) {
-//            world.spawnEntity(loc, rand.nextInt(2) == 0 ? EntityType.SPIDER : EntityType.CAVE_SPIDER);
-//            event.setCancelled(true);
-//        }
-//    }
 }

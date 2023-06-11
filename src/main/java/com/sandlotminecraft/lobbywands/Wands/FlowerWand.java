@@ -1,7 +1,6 @@
 package com.sandlotminecraft.lobbywands.Wands;
 
 import com.sandlotminecraft.lobbywands.LobbyWands;
-import com.sandlotminecraft.lobbywands.ParticleEffect;
 import com.sandlotminecraft.lobbywands.WandExperience;
 import org.bukkit.*;
 import org.bukkit.block.BlockState;
@@ -124,11 +123,11 @@ public class FlowerWand
                                     tloc.getWorld().createExplosion(tloc.getBlockX(), tloc.getY(), tloc.getZ(), 0.5F + wandlevel * 0.25F, false, false);
 
                                     tloc.getBlock().setType(Material.AIR);
-                                    WandExperience.flowerplaced = true;
-                                    WandExperience.pSetExplosion = p;
+                                    WandExperience.CausedByPlayer = true;
+                                    WandExperience.PlayerToCredit = p;
                                     FlowerWand.this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(FlowerWand.this.plugin, new Runnable() {
                                         public void run() {
-                                            WandExperience.flowerplaced = false;
+                                            WandExperience.CausedByPlayer = false;
                                         }
                                     }, 10L);
                                 }
@@ -148,11 +147,11 @@ public class FlowerWand
                                     blockAbove.getWorld().createExplosion(blockAbove.getX(), blockAbove.getY(), blockAbove.getZ(), 0.5F + wandlevel * 0.25F, false, false);
 
                                     blockAbove.getBlock().setType(Material.AIR);
-                                    WandExperience.flowerplaced = true;
-                                    WandExperience.pSetExplosion = p;
+                                    WandExperience.CausedByPlayer = true;
+                                    WandExperience.PlayerToCredit = p;
                                     FlowerWand.this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(FlowerWand.this.plugin, new Runnable() {
                                         public void run() {
-                                            WandExperience.flowerplaced = false;
+                                            WandExperience.CausedByPlayer = false;
                                         }
                                     }, 10L);
                                 }
@@ -162,6 +161,19 @@ public class FlowerWand
                 } while ((flowersPlaced <= flowersAllowed) && (tried <= 20));
                 p.getLocation().getWorld().playSound(p.getLocation(), Sound.ENTITY_TNT_PRIMED, 10.0F, 10.0F);
                 p.sendMessage(ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "Orchideous!");
+
+                // Set player invulnerable for 5 seconds so they don't blow up
+                p.setInvulnerable(true);
+                this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
+                    @Override
+                    public void run() {
+                        if (p.isOnline()) {
+                            p.setInvulnerable(false);
+                        }
+                    }
+                }, 100L);
+
+                // Start flower wand cooldown
                 LobbyWands.setCooldown(p.getName(), "flower");
                 this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
                     public void run() {

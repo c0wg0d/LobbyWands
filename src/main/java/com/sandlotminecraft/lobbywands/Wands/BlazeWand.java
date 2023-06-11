@@ -30,14 +30,14 @@ public class BlazeWand
         String lore1 = ChatColor.translateAlternateColorCodes('&', "&9&oA Magical Fire Wand");
         String lore2 = ChatColor.DARK_AQUA + "0/100 XP";
         String lore3 = ChatColor.DARK_AQUA + "Level 1 Wand";
-        int arthropodsLevel = 1;
+        int enchantmentLevel = 1;
         if(isMaxLevel) {
             lore2 = ChatColor.DARK_AQUA + "0/1000 XP";
             lore3 = ChatColor.DARK_AQUA + "Max Level Wand";
-            arthropodsLevel = 4;
+            enchantmentLevel = 2;
         }
         im.setLore(Arrays.asList(new String[]{lore1, lore2, lore3}));
-        im.addEnchant(Enchantment.DAMAGE_ARTHROPODS, arthropodsLevel, true);
+        im.addEnchant(Enchantment.FIRE_ASPECT, enchantmentLevel, true);
         wand.setItemMeta(im);
         return wand;
     }
@@ -76,8 +76,6 @@ public class BlazeWand
                 case 0:
                     loc = new Location(p.getWorld(), loc.getX() - 1.0D, loc.getY(), loc.getZ() - 1.0D, loc.getYaw(), loc.getPitch());
             }
-            //ParticleEffect.LAVA.display(0.0F, 0.0F, 0.0F, 1.0F, 1, loc, 30);
-            //loc.getWorld().playEffect(loc, Effect.MOBSPAWNER_FLAMES, dir, 10);
             loc.getWorld().spawnParticle(Particle.LAVA, loc, 1);
             loc.getWorld().playSound(loc, Sound.BLOCK_FIRE_AMBIENT, 10.0F, 10.0F);
         }

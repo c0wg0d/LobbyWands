@@ -1,11 +1,11 @@
 name: LobbyWands
-version: 1.4
+version: 1.5
 main: com.sandlotminecraft.lobbywands.LobbyWands
 prefix: LobbyWands
 author: c0wg0d
 description: Lobby Wands
 website: https://www.sandlotminecraft.com
-api-version: 1.16
+api-version: 1.19
 softdepend:
   - EchoPet
 

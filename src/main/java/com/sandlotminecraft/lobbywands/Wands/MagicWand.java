@@ -29,14 +29,14 @@ public class MagicWand
         String lore1 = ChatColor.translateAlternateColorCodes('&', "&9&oMakes Magic Happen :D");
         String lore2 = ChatColor.DARK_AQUA + "0/100 XP";
         String lore3 = ChatColor.DARK_AQUA + "Level 1 Wand";
-        int arthropodsLevel = 1;
+        int enchantmentLevel = 1;
         if(isMaxLevel) {
             lore2 = ChatColor.DARK_AQUA + "0/1000 XP";
             lore3 = ChatColor.DARK_AQUA + "Max Level Wand";
-            arthropodsLevel = 4;
+            enchantmentLevel = 5;
         }
         im.setLore(Arrays.asList(new String[]{lore1, lore2, lore3}));
-        im.addEnchant(Enchantment.DAMAGE_ARTHROPODS, arthropodsLevel, true);
+        im.addEnchant(Enchantment.DAMAGE_ALL, enchantmentLevel, true);
         wand.setItemMeta(im);
         return wand;
     }

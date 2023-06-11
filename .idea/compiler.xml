@@ -19,8 +19,5 @@
         <module name="LobbyWands" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="LobbyWands" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
 </project>

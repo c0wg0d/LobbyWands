@@ -34,10 +34,10 @@
     </build>
 
     <repositories>
-<!--        <repository>-->
-<!--            <id>my-local-repo</id>-->
-<!--            <url>file://${project.basedir}/./lib</url>-->
-<!--        </repository>-->
+        <repository>
+            <id>arnah-group</id>
+            <url>https://repo.arnah.ca/repository/maven-group/</url>
+        </repository>
 
         <repository>
             <id>spigot-repo</id>
@@ -53,14 +53,16 @@
     <dependencies>
         <dependency>
             <groupId>com.dsh105</groupId>
-            <artifactId>EchoPet</artifactId>
-            <version>2.8.1-SNAPSHOT</version>
+            <artifactId>EchoPet-API</artifactId>
+            <version>1.3.0-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.16.3-R0.1-SNAPSHOT</version>
+            <version>1.19.4-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
