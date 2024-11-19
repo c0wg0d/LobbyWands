@@ -51,31 +51,31 @@ public class FlowerWand
         }
         if ((event.getAction() == Action.LEFT_CLICK_AIR) || (event.getAction() == Action.LEFT_CLICK_BLOCK)) {
             int dir = LobbyWands.getCardinalDirection(p).intValue();
-            Location loc = p.getLocation();
+            Location loc = p.getEyeLocation();
             switch (dir) {
                 case 1:
-                    loc = new Location(p.getWorld(), loc.getX(), loc.getY() + 1.0D, loc.getZ() - 0.75D, loc.getYaw(), loc.getPitch());
+                    loc = new Location(p.getWorld(), loc.getX(), loc.getY(), loc.getZ() - 0.75D, loc.getYaw(), loc.getPitch());
                     break;
                 case 2:
-                    loc = new Location(p.getWorld(), loc.getX() + 0.5D, loc.getY() + 1.0D, loc.getZ() - 0.5D, loc.getYaw(), loc.getPitch());
+                    loc = new Location(p.getWorld(), loc.getX() + 0.5D, loc.getY(), loc.getZ() - 0.5D, loc.getYaw(), loc.getPitch());
                     break;
                 case 5:
-                    loc = new Location(p.getWorld(), loc.getX() + 0.75D, loc.getY() + 1.0D, loc.getZ(), loc.getYaw(), loc.getPitch());
+                    loc = new Location(p.getWorld(), loc.getX() + 0.75D, loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
                     break;
                 case 8:
-                    loc = new Location(p.getWorld(), loc.getX() + 0.5D, loc.getY() + 1.0D, loc.getZ() + 0.5D, loc.getYaw(), loc.getPitch());
+                    loc = new Location(p.getWorld(), loc.getX() + 0.5D, loc.getY(), loc.getZ() + 0.5D, loc.getYaw(), loc.getPitch());
                     break;
                 case 7:
-                    loc = new Location(p.getWorld(), loc.getX(), loc.getY() + 1.0D, loc.getZ() + 0.75D, loc.getYaw(), loc.getPitch());
+                    loc = new Location(p.getWorld(), loc.getX(), loc.getY(), loc.getZ() + 0.75D, loc.getYaw(), loc.getPitch());
                     break;
                 case 6:
-                    loc = new Location(p.getWorld(), loc.getX() - 0.5D, loc.getY() + 1.0D, loc.getZ() + 0.5D, loc.getYaw(), loc.getPitch());
+                    loc = new Location(p.getWorld(), loc.getX() - 0.5D, loc.getY(), loc.getZ() + 0.5D, loc.getYaw(), loc.getPitch());
                     break;
                 case 3:
-                    loc = new Location(p.getWorld(), loc.getX() - 0.75D, loc.getY() + 1.0D, loc.getZ(), loc.getYaw(), loc.getPitch());
+                    loc = new Location(p.getWorld(), loc.getX() - 0.75D, loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
                     break;
                 case 0:
-                    loc = new Location(p.getWorld(), loc.getX() - 0.5D, loc.getY() + 1.0D, loc.getZ() - 0.5D, loc.getYaw(), loc.getPitch());
+                    loc = new Location(p.getWorld(), loc.getX() - 0.5D, loc.getY(), loc.getZ() - 0.5D, loc.getYaw(), loc.getPitch());
             }
             //ParticleEffect.HEART.display(0.0F, 0.0F, 0.0F, 0.0F, 5, loc, 30);
             loc.getWorld().spawnParticle(Particle.HEART, loc, 1);

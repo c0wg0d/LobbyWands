@@ -53,8 +53,8 @@ public class LevitationWand
         }
         int wandLevel = WandExperience.getLevel((String) p.getInventory().getItemInMainHand().getItemMeta().getLore().get(2));
         if ((event.getAction() == Action.LEFT_CLICK_AIR) || (event.getAction() == Action.LEFT_CLICK_BLOCK)) {
-            Location loc = p.getLocation();
-            loc.getWorld().spawnParticle(Particle.BUBBLE_COLUMN_UP, loc, 1);
+            Location loc = p.getEyeLocation();
+            loc.getWorld().spawnParticle(Particle.GLOW, loc, 1);
             loc.getWorld().playSound(loc, Sound.ENTITY_SHULKER_OPEN, 3.0F, 10.0F);
 
             // Shoot a shulker bullet at the targeted entity
@@ -91,6 +91,9 @@ public class LevitationWand
         if ((event.getAction() == Action.RIGHT_CLICK_AIR) || (event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
             long cooldown = 90000 - (WandExperience.getLevel((String) p.getInventory().getItemInMainHand().getItemMeta().getLore().get(2)) - 1) * 6000;
             long timesince = System.currentTimeMillis() - LobbyWands.getCooldown(p.getName(), "levitation");
+            if (p.hasPotionEffect(PotionEffectType.LEVITATION)) {
+                p.removePotionEffect(PotionEffectType.LEVITATION);
+            }
             if (timesince < cooldown) {
                 p.sendMessage(ChatColor.DARK_AQUA + "Your wand is still recharging. You can use it again in " + (cooldown - timesince) / 1000L + " seconds.");
             } else {

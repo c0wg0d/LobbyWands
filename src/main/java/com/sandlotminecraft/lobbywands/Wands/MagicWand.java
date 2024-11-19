@@ -84,7 +84,7 @@ public class MagicWand
                     loc = new Location(p.getWorld(), loc.getX() - 0.5D, loc.getY() + 1.0D, loc.getZ() - 0.5D, loc.getYaw(), loc.getPitch());
             }
             //loc.getWorld().playEffect(loc, Effect.VILLAGER_PLANT_GROW, dir, 10);
-            loc.getWorld().spawnParticle(Particle.SPELL, loc, 1);
+            loc.getWorld().spawnParticle(Particle.CRIT_MAGIC, loc, 1);
             loc.getWorld().playSound(loc, Sound.BLOCK_FIRE_EXTINGUISH, 3.0F, 10.0F);
         }
         if ((event.getAction() == Action.RIGHT_CLICK_AIR) || (event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
